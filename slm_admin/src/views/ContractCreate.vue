@@ -330,8 +330,8 @@
 import { ref, onMounted } from 'vue'
 import { stringify } from 'flatted';
 import { toRaw } from 'vue';
-const CONST_HOST = "http://localhost:8080"
-// const CONST_HOST = "https://id.slmsolar.com"
+// const CONST_HOST = "http://localhost:8080"
+const CONST_HOST = "https://id.slmsolar.com"
 
 const code = ref('')
 const name = ref('')
