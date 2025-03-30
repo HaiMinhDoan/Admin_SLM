@@ -2,8 +2,13 @@
     <div>
         <form action="#" method="get" style="">
             <input type="text" hidden name="template_id" value="1">
-            <table border="1" cellspacing="0" cellpadding="0" class="table table-bordered table-striped table-hover">
+            <table border="solid">
                 <tbody>
+                    <tr>
+                        <td colspan="6" style="">
+                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo tấm pin</h1>
+                        </td>
+                    </tr>
                     <tr>
                         <td>Chọn thương hiệu</td>
                         <td>
@@ -42,8 +47,9 @@
                             <div v-for="(image, index) in images" :key="index" style="margin-bottom: 5px;">
                                 <input type="text" :name="'image_' + index" :placeholder="'Ảnh ' + (index + 1)"
                                     v-model="images[index]">
+                                <button type="button" @click="removeImage(index)">Xóa</button>
                             </div>
-                            <button type="button" @click="addImageInput">Thêm ảnh</button>
+                            <button type="button" @click="addImageInput()">Thêm ảnh</button>
                         </td>
                     </tr>
                     <tr>
@@ -88,12 +94,16 @@
                     </tr>
                     <tr>
                         <td>Khởi tạo giá</td>
-                        <td><input type="number" name="begin_margin" id="begin_margin" v-model="begin_price"
+                        <td><input type="number" name="begin_price" id="begin_price" v-model="begin_price"
                                 placeholder="Khởi tạo giá"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button class="" type="button" @click="createMerchandise()">Tạo</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
-            <button type="button" @click="createMerchandise()">Tạo</button>
         </form>
     </div>
 </template>
@@ -101,6 +111,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+const CONST_HOST = "http://localhost:8080"
+// const CONST_HOST = "https://id.slmsolar.com"
 const brands = ref([])
 const choseBrand = ref(0)
 const code = ref('')
@@ -117,11 +129,11 @@ const area_m2 = ref(0)
 const weight_kg = ref(0)
 const technology = ref('')
 const warranty_years = ref(0)
-const begin_margin = ref(0)
+const begin_price = ref(0)
 
 const createMerchandise = async () => {
     const sendingData = {
-        template_id: 1,
+        template_code: 'PIN_PV',
         brand_id: choseBrand.value,
         supplier_id: null,
         code: code.value,
@@ -130,7 +142,7 @@ const createMerchandise = async () => {
         unit: unit.value,
         description_in_contract: description_in_contract.value,
         images: images.value,
-        begin_margin: begin_margin.value,
+        begin_price: begin_price.value,
         data_json: {
             power_watt: power_watt.value,
             width_mm: width_mm.value,
@@ -143,7 +155,7 @@ const createMerchandise = async () => {
         }
     }
     console.log(JSON.stringify(sendingData))
-    const response = await fetch('http://localhost:8080/api/products/add', {
+    const response = await fetch(CONST_HOST + '/api/products/add', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -161,7 +173,7 @@ const calculateArea = () => {
     area_m2.value = (width_mm.value * height_mm.value) / 1000000
 }
 const loadBrands = async () => {
-    const response = await fetch('http://localhost:8080/api/brands')
+    const response = await fetch(CONST_HOST + '/api/brands')
     if (response.ok) {
         const data = await response.json()
         brands.value = data
@@ -173,9 +185,36 @@ const loadBrands = async () => {
 const addImageInput = () => {
     images.value.push('') // Thêm một chuỗi rỗng vào mảng
 }
+const removeImage = (index) => {
+    images.value.splice(index, 1); // Xóa ảnh tại vị trí `index`
+};
 onMounted(() => {
     loadBrands()
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="css" scoped>
+td {
+    white-space: nowrap;
+    /* Không cho xuống dòng */
+    width: 150px;
+    /* Đặt độ rộng tùy chỉnh */
+}
+
+.btn {
+    /* Nút to hơn và đẹp hơn */
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+</style>

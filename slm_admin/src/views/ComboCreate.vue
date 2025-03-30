@@ -5,7 +5,7 @@
                 <tbody>
                     <tr>
                         <td colspan="6" style="">
-                            <h1>Bảng tạo combo trọn gói lắp đặt</h1>
+                            <h1 style="display: flex; flex-direction: column; align-items: center;">Bảng tạo combo trọn gói lắp đặt</h1>
                         </td>
                     </tr>
                     <tr>
@@ -123,9 +123,10 @@
                         <td>Loại mái</td>
                         <td>
                             <select v-model="aluminums_frame_installation_type" v-on:change="filterMerchandise()">
-                                <option :value="'All'">Tất cả</option>
+                                <option :value="'All'">Tất cả các loại mái</option>
                                 <option :value="'Áp mái tôn'">Áp mái tôn</option>
                                 <option :value="'Mái ngói'">Áp mái ngói</option>
+                                <option :value="'Khung sắt'">Khung sắt</option>
                             </select>
                         </td>
                     </tr>
@@ -189,44 +190,42 @@
                     <tr>
                         <td>Hệ tiếp địa</td>
                         <td>
-                            <select v-model="grounding_system" v-on:change="calcGroundSystemPrice(grounding_system)">
-                                <option v-for="merchandise in grounding_systems" :value="merchandise.id">{{
-                                    merchandise.name }}</option>
-                            </select>
-                        </td>
-                        <td>
-                            Số lượng:
-                            <input type="number" name="" id="" v-model="grounding_system_number">
-                        </td>
-                        <td>
-                            Giá:
-                            <input type="number" name="" id="" v-model="grounding_system_price">
-                        </td>
-                        <td>
-                            GM:
-                            <input type="number" name="" id="" v-model="grounding_system_gm">
+                            <div v-for="(grounding, index) in grounding_systems_list" :key="index"
+                                style="margin-bottom: 10px;">
+                                Loại:
+                                <select v-model="grounding.selected"
+                                    v-on:change="calcGroundSystemPrice(grounding.selected)">
+                                    <option v-for="merchandise in grounding_systems" :value="merchandise.id">
+                                        {{ merchandise.name }}
+                                    </option>
+                                </select><br>
+                                Số lượng: <input type="number" v-model="grounding.quantity" placeholder="Số lượng"><br>
+                                Giá/đơn vị: <input type="number" v-model="grounding.price" placeholder="Giá"><br>
+                                GM: <input type="number" v-model="grounding.gm" min="0"><br>
+                                <button type="button" @click="removeGroundingSystem(index)">Xóa</button>
+                            </div>
+                            <button type="button" @click="addGroundingSystem">Thêm Hệ tiếp địa</button>
                         </td>
                     </tr>
                     <tr>
                         <td>Trọn gói lắp đặt</td>
                         <td>
-                            <select v-model="installation_package"
-                                v-on:change="calcInstallationPrice(installation_package)">
-                                <option v-for="merchandise in installation_packages" :value="merchandise.id">{{
-                                    merchandise.name }}</option>
-                            </select>
-                        </td>
-                        <td>
-                            Số lượng:
-                            <input type="number" name="" id="" value="1" readonly>
-                        </td>
-                        <td>
-                            Giá:
-                            <input type="number" name="" id="" v-model="installation_package_price">
-                        </td>
-                        <td>
-                            Giá:
-                            <input type="number" name="" id="" v-model="installation_package_gm">
+                            <div v-for="(installation, index) in installation_packages_list" :key="index"
+                                style="margin-bottom: 10px;">
+                                Loại:
+                                <select v-model="installation.selected"
+                                    v-on:change="calcInstallationPrice(installation.selected)">
+                                    <option v-for="merchandise in installation_packages" :value="merchandise.id">
+                                        {{ merchandise.name }}
+                                    </option>
+                                </select><br>
+                                Số lượng: <input type="number" v-model="installation.quantity"
+                                    placeholder="Số lượng"><br>
+                                Giá/đơn vị: <input type="number" v-model="installation.price" placeholder="Giá"><br>
+                                GM: <input type="number" v-model="installation.gm" min="0"><br>
+                                <button type="button" @click="removeInstallationPackage(index)">Xóa</button>
+                            </div>
+                            <button type="button" @click="addInstallationPackage">Thêm Trọn gói lắp đặt</button>
                         </td>
                     </tr>
                     <tr>
@@ -259,6 +258,8 @@
 import { ref, onMounted } from 'vue'
 import { stringify } from 'flatted';
 import { toRaw } from 'vue';
+const CONST_HOST = "http://localhost:8080"
+// const CONST_HOST = "https://id.slmsolar.com"
 
 const code = ref('')
 const name = ref('')
@@ -270,8 +271,6 @@ const pv = ref(0)
 const inverter = ref(0)
 const battery = ref(0)
 const solar_panel_cabinet = ref(0)
-const grounding_system = ref(0)
-const installation_package = ref(0)
 
 const installation_type = ref('Ongrid')
 const phase_type = ref('1-phase')
@@ -438,13 +437,16 @@ const pv_number = ref(0)
 const inverter_number = ref(0)
 const battery_number = ref(0)
 const solar_panel_cabinet_number = ref(0)
-const grounding_system_number = ref(0)
 
 
 // Mảng lưu danh sách các "Hệ khung nhôm"
 const aluminums_frames_list = ref([])
 // Mảng lưu danh sách các "Dây cáp DC/AC"
 const dc_ac_cables_list = ref([])
+// Mảng lưu danh sách các "Hệ tiếp địa"
+const grounding_systems_list = ref([]);
+// Mảng lưu danh sách các "Trọn gói lắp đặt"
+const installation_packages_list = ref([]);
 
 const dc_ac_cables = ref([])
 const dc_ac_cables_show = ref([])
@@ -468,12 +470,6 @@ const calculateTotalPrice = () => {
     // Tính giá cho tủ điện NLMT
     total += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value * (1 + solar_panel_cabinet_gm.value / 100);
 
-    // Tính giá cho hệ tiếp địa
-    total += grounding_system_number.value * grounding_system_price.value * (1 + grounding_system_gm.value / 100);
-
-    // Tính giá cho trọn gói lắp đặt
-    total += installation_package_price.value * (1 + installation_package_gm.value / 100);
-
     // Tính giá cho từng vật tư trong Hệ khung nhôm
     for (let i = 0; i < aluminums_frames_list.value.length; i++) {
         const frame = aluminums_frames_list.value[i];
@@ -484,6 +480,17 @@ const calculateTotalPrice = () => {
     for (let i = 0; i < dc_ac_cables_list.value.length; i++) {
         const cable = dc_ac_cables_list.value[i];
         total += cable.quantity * cable.price * (1 + cable.gm / 100);
+    }
+    // Tính giá cho từng vật tư trong Hệ tiếp địa
+    for (let i = 0; i < grounding_systems_list.value.length; i++) {
+        const grounding = grounding_systems_list.value[i];
+        total += grounding.quantity * grounding.price * (1 + grounding.gm / 100);
+    }
+
+    // Tính giá cho từng vật tư trong Trọn gói lắp đặt
+    for (let i = 0; i < installation_packages_list.value.length; i++) {
+        const installation = installation_packages_list.value[i];
+        total += installation.quantity * installation.price * (1 + installation.gm / 100);
     }
 
     // Gán tổng tiền vào biến `total_price`
@@ -510,14 +517,6 @@ const calculateTotalGM = () => {
     totalGMValue += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value * (solar_panel_cabinet_gm.value / 100);
     totalValue += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value;
 
-    // Tính GM và giá trị cho hệ tiếp địa
-    totalGMValue += grounding_system_number.value * grounding_system_price.value * (grounding_system_gm.value / 100);
-    totalValue += grounding_system_number.value * grounding_system_price.value;
-
-    // Tính GM và giá trị cho trọn gói lắp đặt
-    totalGMValue += installation_package_price.value * (installation_package_gm.value / 100);
-    totalValue += installation_package_price.value;
-
     // Tính GM và giá trị cho từng vật tư trong Hệ khung nhôm
     for (let i = 0; i < aluminums_frames_list.value.length; i++) {
         const frame = aluminums_frames_list.value[i];
@@ -530,6 +529,19 @@ const calculateTotalGM = () => {
         const cable = dc_ac_cables_list.value[i];
         totalGMValue += cable.quantity * cable.price * (cable.gm / 100);
         totalValue += cable.quantity * cable.price;
+    }
+    // Tính GM và giá trị cho từng vật tư trong Hệ tiếp địa
+    for (let i = 0; i < grounding_systems_list.value.length; i++) {
+        const grounding = grounding_systems_list.value[i];
+        totalGMValue += grounding.quantity * grounding.price * (grounding.gm / 100);
+        totalValue += grounding.quantity * grounding.price;
+    }
+
+    // Tính GM và giá trị cho từng vật tư trong Trọn gói lắp đặt
+    for (let i = 0; i < installation_packages_list.value.length; i++) {
+        const installation = installation_packages_list.value[i];
+        totalGMValue += installation.quantity * installation.price * (installation.gm / 100);
+        totalValue += installation.quantity * installation.price;
     }
 
     // Tính GM trung bình
@@ -565,12 +577,6 @@ const createCombo = async () => {
             quantity: solar_panel_cabinet_number.value,
             price: solar_panel_cabinet_price.value,
             gm: solar_panel_cabinet_gm.value
-        },
-        {
-            merchandise_id: grounding_system.value,
-            quantity: grounding_system_number.value,
-            price: grounding_system_price.value,
-            gm: grounding_system_gm.value
         }
     ];
     for (let i = 0; i < aluminums_frames_list.value.length; i++) {
@@ -591,6 +597,25 @@ const createCombo = async () => {
             gm: item.gm
         })
     }
+    for (let i = 0; i < grounding_systems_list.value.length; i++) {
+        const item = toRaw(grounding_systems_list.value[i]);
+        sendingArray.push({
+            merchandise_id: item.selected,
+            quantity: item.quantity,
+            price: item.price,
+            gm: item.gm
+        });
+    }
+
+    for (let i = 0; i < installation_packages_list.value.length; i++) {
+        const item = toRaw(installation_packages_list.value[i]);
+        sendingArray.push({
+            merchandise_id: item.selected,
+            quantity: item.quantity,
+            price: item.price,
+            gm: item.gm
+        });
+    }
     const sendingData = {
         description: null,
         code: code.value,
@@ -602,7 +627,7 @@ const createCombo = async () => {
         list_pre_quote_merchandise: sendingArray
     }
     console.log(JSON.stringify(sendingData))
-    const response = await fetch('https://id.slmsolar.com/api/pre_quote/combo', {
+    const response = await fetch(CONST_HOST + '/api/pre_quote/combo', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -620,13 +645,14 @@ const createCombo = async () => {
     }
 }
 const getAllMerchandises = async () => {
-    const response = await fetch('https://id.slmsolar.com/api/products', {
+    const response = await fetch(CONST_HOST + '/api/products', {
         method: 'GET',
     }
     )
     if (response.ok) {
         const data = await response.json()
         merchandises.value = data
+        console.log(data)
     } else {
         console.error('Failed to create merchandise')
     }
@@ -651,7 +677,33 @@ const addAluminumFrame = () => {
 const removeAluminumFrame = (index) => {
     aluminums_frames_list.value.splice(index, 1)
 }
+const addGroundingSystem = () => {
+    grounding_systems_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10 });
+};
 
+const removeGroundingSystem = (index) => {
+    grounding_systems_list.value.splice(index, 1);
+};
+
+for (let i = 0; i < grounding_systems_list.value.length; i++) {
+    const item = toRaw(grounding_systems_list.value[i]);
+    sendingArray.push({
+        merchandise_id: item.selected,
+        quantity: item.quantity,
+        price: item.price,
+        gm: item.gm
+    });
+}
+
+for (let i = 0; i < installation_packages_list.value.length; i++) {
+    const item = toRaw(installation_packages_list.value[i]);
+    sendingArray.push({
+        merchandise_id: item.selected,
+        quantity: item.quantity,
+        price: item.price,
+        gm: item.gm
+    });
+}
 
 const calculateAL = () => {
     for (let j = 0; j < aluminums_frames_list.value.length; j++) {
@@ -760,7 +812,6 @@ const filterMerchandise = () => {
     batteries_show.value = batteries.value.filter(item => item.data_json.phase_type.includes(phase_type.value))
     aluminums_frames_show.value = aluminums_frames.value.filter(item => {
         if (aluminums_frame_installation_type.value === 'All') return true;
-        if (item.data_json.installation_type.includes('Tất cả các loại mái')) return true;
         return item.data_json.installation_type.includes(aluminums_frame_installation_type.value);
     });
     dc_ac_cables_show.value = dc_ac_cables.value.filter(item => item.data_json.phase_type.includes(phase_type.value))

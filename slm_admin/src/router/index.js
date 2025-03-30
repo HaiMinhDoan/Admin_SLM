@@ -28,6 +28,16 @@ const router = createRouter({
       component: () => import('../views/AddInverter.vue'),
     },
     {
+      path: '/add-battery',
+      name: 'add-battery',
+      component: () => import('../views/AddBattery.vue'),
+    },
+    {
+      path: '/add-aluminum-frame',
+      name: 'add-aluminum-frame',
+      component: () => import('../views/AddAluminumFrame.vue'),
+    },
+    {
       path: '/combo-create',
       name: 'combo-create',
       component: () => import('../views/ComboCreate.vue'),
