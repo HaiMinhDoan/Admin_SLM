@@ -136,8 +136,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-const CONST_HOST = "http://localhost:8080"
-// const CONST_HOST = "https://id.slmsolar.com"
+// const CONST_HOST = "http://localhost:8080"
+const CONST_HOST = "https://id.slmsolar.com"
 const brands = ref([])
 const choseBrand = ref(0)
 const code = ref('')
