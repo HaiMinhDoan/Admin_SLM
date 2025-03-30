@@ -5,7 +5,13 @@
                 <tbody>
                     <tr>
                         <td colspan="6" style="">
-                            <h1 style="display: flex; flex-direction: column; align-items: center;">Bảng tạo hợp đồng trọn gói lắp đặt</h1>
+                            <h1 style="display: flex; flex-direction: column; align-items: center;">Bảng tạo hợp đồng
+                                trọn gói lắp đặt</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="">
+                            <h2 style="display: flex; flex-direction: column; align-items: center;">Tiêu đề hợp đồng</h2>
                         </td>
                     </tr>
                     <tr>
@@ -17,8 +23,67 @@
                         <td><input type="text" name="name" id="name" v-model="name"></td>
                     </tr>
                     <tr>
-                        <td>Số điện thoại sale</td>
-                        <td><input type="text" name="name" id="name" v-model="sale_phone"></td>
+                        <td colspan="6" style="">
+                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin người bán</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tìm kiếm</td>
+                        <td>
+                            <input type="text" v-model="sale_search" placeholder="Nhập tên hoặc số điện thoại"
+                                @input="filterSales">
+                            <ul v-if="filtered_sales.length > 0"
+                                style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; padding: 0; margin: 0; list-style: none;">
+                                <li v-for="sale in filtered_sales" :key="sale.id" @click="selectSale(sale)"
+                                    style="padding: 5px; cursor: pointer; background: #f9f9f9; color: black;"
+                                    @mouseover="hoveredSale = sale.id" @mouseleave="hoveredSale = null"
+                                    :style="{ background: hoveredSale === sale.id ? '#e0e0e0' : '#f9f9f9' }">
+                                    {{ sale.name }} ({{ sale.phone }})
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Thông tin sale</td>
+                        <td><input type="text" name="" id="" v-model="sale_info" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>ID của sale</td>
+                        <td><input type="text" v-model="sale_id" readonly></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="">
+                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin khách hàng</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mã giả định khách hàng</td>
+                        <td><input type="text" name="" id="" v-model="customer_code"></td>
+                    </tr>
+                    <tr>
+                        <td>Tên khách hàng</td>
+                        <td><input type="text" name="" id="" v-model="customer_name"></td>
+                    </tr>
+                    <tr>
+                        <td>Địa chỉ khách hàng</td>
+                        <td><input type="text" name="" id="" v-model="customer_address"></td>
+                    </tr>
+                    <tr>
+                        <td>SĐT khách hàng</td>
+                        <td><input type="text" name="" id="" v-model="customer_phone"></td>
+                    </tr>
+                    <tr>
+                        <td>Email khách hàng(Nếu có)</td>
+                        <td><input type="text" name="" id="" v-model="customer_email"></td>
+                    </tr>
+                    <tr>
+                        <td>Mã số thuế khách hàng</td>
+                        <td><input type="text" name="" id="" v-model="customer_tax_code"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="">
+                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin lắp đặt</h2>
+                        </td>
                     </tr>
                     <tr>
                         <td>Chọn hệ lắp đặt</td>
@@ -208,7 +273,7 @@
                                 GM: <input type="number" v-model="grounding.gm" min="0"><br>
                                 <button type="button" @click="removeGroundingSystem(index)">Xóa</button>
                             </div>
-                            <button type="button" @click="addGroundingSystem">Thêm Hệ tiếp địa</button>
+                            <button type="button" @click="addGroundingSystem()">Thêm Hệ tiếp địa</button>
                         </td>
                     </tr>
                     <tr>
@@ -249,7 +314,7 @@
                             <button type="button" v-on:click="calculateTotalGM()">Tính GM trung bình</button>
                         </td>
                         <td>
-                            <button type="button" @click="createCombo()">Tạo combo</button>
+                            <button type="button" @click="createContract()">Tạo combo</button>
                         </td>
                         <!-- <td>
                             <button type="button" @click="calculateAL()">Tính số lượng nhôm</button>
@@ -270,7 +335,12 @@ const CONST_HOST = "http://localhost:8080"
 
 const code = ref('')
 const name = ref('')
-
+const customer_code = ref('')
+const customer_name = ref('')
+const customer_address = ref('')
+const customer_phone = ref('')
+const customer_email = ref('')
+const customer_tax_code = ref('')
 const total_price = ref(0)
 const total_gm = ref(0)
 const kind = ref('combo')
@@ -432,6 +502,33 @@ const reChangePower = () => {
 }
 
 const merchandises = ref([])
+const sales = ref([])
+const sale_search = ref(''); // Giá trị nhập vào ô tìm kiếm
+const filtered_sales = ref([]); // Danh sách sale được lọc
+const sale_info = ref(''); // Thông tin sale (Tên + Số điện thoại)
+const sale_id = ref(0); // ID của sale
+const hoveredSale = ref(null); // Sale đang được hover
+
+// Hàm lọc danh sách sale dựa trên giá trị nhập
+const filterSales = () => {
+    const search = sale_search.value.toLowerCase();
+    if(search === ''|| search === null){
+        filtered_sales.value = []
+        return
+    }
+    filtered_sales.value = sales.value.filter(sale => 
+        sale.name.toLowerCase().includes(search) || 
+        sale.phone.includes(search)
+    );
+};
+
+// Hàm chọn sale từ danh sách gợi ý
+const selectSale = (sale) => {
+    sale_info.value = `${sale.name} (${sale.phone})`; // Gán thông tin sale vào sale_info
+    sale_id.value = sale.id; // Gán ID của sale vào sale_id
+    sale_search.value = ''; // Xóa nội dung tìm kiếm
+    filtered_sales.value = []; // Ẩn danh sách gợi ý
+};
 const pvs = ref([])
 const inverters = ref([])
 const inverters_show = ref([])
@@ -559,7 +656,7 @@ const calculateTotalGM = () => {
     }
 };
 
-const createCombo = async () => {
+const createContract = async () => {
     const sendingArray = [
         {
             merchandise_id: pv.value,
@@ -580,7 +677,7 @@ const createCombo = async () => {
             gm: solar_panel_cabinet_gm.value
         }
     ];
-    if(installation_type.value==='Hybrid'){
+    if (installation_type.value === 'Hybrid') {
         sendingArray.push({
             merchandise_id: battery.value,
             quantity: battery_number.value,
@@ -629,14 +726,22 @@ const createCombo = async () => {
         description: null,
         code: code.value,
         name: name.value,
+        customer_id: null,
+        sale_id: sale_id.value,
+        customer_code:customer_code.value,
+        customer_name: customer_name.value,
+        customer_address: customer_address.value,
+        customer_phone: customer_phone.value,
+        customer_email: customer_email.value,
+        customer_tax_code: customer_tax_code.value,
         status: 'accepted',
         installation_type: installation_type.value,
         total_price: total_price.value,
-        kind: 'combo',
+        kind: 'contract_quote',
         list_pre_quote_merchandise: sendingArray
     }
     console.log(JSON.stringify(sendingData))
-    const response = await fetch(CONST_HOST + '/api/pre_quote/combo', {
+    const response = await fetch(CONST_HOST + '/api/pre_quote/contract_quote', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -645,7 +750,7 @@ const createCombo = async () => {
     })
     if (response.ok) {
         const data = await response.json()
-        console.log(data)
+        window.alert('Tạo thành công')
     } else {
         // Lấy thông tin lỗi từ phản hồi
         const errorData = await response.json();
@@ -663,10 +768,24 @@ const getAllMerchandises = async () => {
         merchandises.value = data
         console.log(data)
     } else {
-        console.error('Failed to create merchandise')
+        console.error('Failed to get merchandises')
     }
     sortData()
     filterMerchandise()
+}
+
+const getAllSales = async () => {
+    const response = await fetch(CONST_HOST + '/api/users/sale', {
+        method: 'GET',
+    }
+    )
+    if (response.ok) {
+        const data = await response.json()
+        sales.value = data
+        console.log(data)
+    } else {
+        console.error('Failed to get sales')
+    }
 }
 // Hàm thêm một mục "Dây cáp DC/AC"
 const addDcAcCable = () => {
@@ -694,6 +813,13 @@ const removeGroundingSystem = (index) => {
     grounding_systems_list.value.splice(index, 1);
 };
 
+const addInstallationPackage = () => {
+    installation_packages_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10 });
+};
+
+const removeInstallationPackage = (index) => {
+    installation_packages_list.value.splice(index, 1);
+};
 for (let i = 0; i < grounding_systems_list.value.length; i++) {
     const item = toRaw(grounding_systems_list.value[i]);
     sendingArray.push({
@@ -818,7 +944,7 @@ const calculateW = () => {
 const filterMerchandise = () => {
     inverters_show.value = inverters.value.filter(item => (item.data_json.phase_type.includes(phase_type.value) &&
         item.data_json.installation_type.includes(installation_type.value)))
-    batteries_show.value = batteries.value.filter(item => item.data_json.phase_type.includes(phase_type.value) && installation_type.value==='Hybrid')
+    batteries_show.value = batteries.value.filter(item => item.data_json.phase_type.includes(phase_type.value) && installation_type.value === 'Hybrid')
     aluminums_frames_show.value = aluminums_frames.value.filter(item => {
         if (aluminums_frame_installation_type.value === 'All') return true;
         return item.data_json.installation_type.includes(aluminums_frame_installation_type.value);
@@ -838,7 +964,8 @@ const sortData = () => {
 }
 
 onMounted(() => {
-    getAllMerchandises()
+    getAllMerchandises();
+    getAllSales();
 })
 </script>
 
