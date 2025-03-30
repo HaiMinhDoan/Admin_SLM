@@ -41,6 +41,11 @@ const router = createRouter({
       path: '/combo-create',
       name: 'combo-create',
       component: () => import('../views/ComboCreate.vue'),
+    },
+    {
+      path: '/contract-create',
+      name: 'contract-create',
+      component: () => import('../views/ContractCreate.vue'),
     }
   ],
 })

@@ -5,7 +5,7 @@
                 <tbody>
                     <tr>
                         <td colspan="6" style="">
-                            <h1 style="display: flex; flex-direction: column; align-items: center;">Bảng tạo combo trọn gói lắp đặt</h1>
+                            <h1 style="display: flex; flex-direction: column; align-items: center;">Bảng tạo hợp đồng trọn gói lắp đặt</h1>
                         </td>
                     </tr>
                     <tr>
@@ -13,8 +13,12 @@
                         <td><input type="text" name="code" id="code" v-model="code"></td>
                     </tr>
                     <tr>
-                        <td>Tên báo giá</td>
+                        <td>Tên hợp đồng</td>
                         <td><input type="text" name="name" id="name" v-model="name"></td>
+                    </tr>
+                    <tr>
+                        <td>Số điện thoại sale</td>
+                        <td><input type="text" name="name" id="name" v-model="sale_phone"></td>
                     </tr>
                     <tr>
                         <td>Chọn hệ lắp đặt</td>
@@ -225,8 +229,11 @@
                                 GM: <input type="number" v-model="installation.gm" min="0"><br>
                                 <button type="button" @click="removeInstallationPackage(index)">Xóa</button>
                             </div>
-                            <button type="button" @click="addInstallationPackage()">Thêm Trọn gói lắp đặt</button>
+                            <button type="button" @click="addInstallationPackage">Thêm Trọn gói lắp đặt</button>
                         </td>
+                    </tr>
+                    <tr>
+
                     </tr>
                     <tr>
                         <td>Tổng tiền</td>
@@ -258,8 +265,8 @@
 import { ref, onMounted } from 'vue'
 import { stringify } from 'flatted';
 import { toRaw } from 'vue';
-// const CONST_HOST = "http://localhost:8080"
-const CONST_HOST = "https://id.slmsolar.com"
+const CONST_HOST = "http://localhost:8080"
+// const CONST_HOST = "https://id.slmsolar.com"
 
 const code = ref('')
 const name = ref('')
@@ -685,14 +692,6 @@ const addGroundingSystem = () => {
 
 const removeGroundingSystem = (index) => {
     grounding_systems_list.value.splice(index, 1);
-};
-
-const addInstallationPackage = () => {
-    installation_packages_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10 });
-};
-
-const removeInstallationPackage = (index) => {
-    installation_packages_list.value.splice(index, 1);
 };
 
 for (let i = 0; i < grounding_systems_list.value.length; i++) {

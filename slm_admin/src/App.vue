@@ -13,6 +13,7 @@ import HelloWorld from './components/HelloWorld.vue'
                 <RouterLink class="side_nav" to="/add-battery">Thêm pin lưu trữ</RouterLink>
                 <RouterLink class="side_nav" to="/add-aluminum-frame">Thêm hệ khung nhôm</RouterLink>
                 <RouterLink class="side_nav" to="/combo-create">Tạo Combo</RouterLink>
+                <RouterLink class="side_nav" to="/contract-create">Tạo Hợp đồng</RouterLink>
             </nav>
         </div>
         <div style="width: 100%;">
