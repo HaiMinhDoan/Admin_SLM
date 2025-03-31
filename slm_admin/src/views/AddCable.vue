@@ -6,8 +6,7 @@
                 <tbody>
                     <tr>
                         <td colspan="2">
-                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo hệ khung nhôm
-                            </h1>
+                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo dây điện</h1>
                         </td>
                     </tr>
                     <tr>
@@ -54,28 +53,37 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Kiểu lắp đặt</td>
+                        <td>Chọn pha</td>
                         <td>
                             <div>
                                 <label>
-                                    <input type="checkbox" value="Áp mái tôn" v-model="installation_type"> Áp mái tôn
+                                    <input type="checkbox" value="1-phase" v-model="phase_type"> 1 pha
                                 </label><br>
                                 <label>
-                                    <input type="checkbox" value="Mái ngói" v-model="installation_type"> Mái ngói
+                                    <input type="checkbox" value="3-phase high voltage" v-model="phase_type"> 3 pha áp
+                                    cao
                                 </label><br>
                                 <label>
-                                    <input type="checkbox" value="Khung sắt" v-model="phase_type"> Khung sắt
+                                    <input type="checkbox" value="3-phase low voltage" v-model="phase_type"> 3 pha áp
+                                    thấp
                                 </label>
                             </div>
                         </td>
                     </tr>
-
                     <tr>
-                        <td>Bảo hành</td>
-                        <td><input type="number" name="warranty_years" id="warranty_years" v-model="warranty_years"
-                                placeholder="Bảo hành"></td>
+                        <td>Tiết diện dây</td>
+                        <td>
+                            <select name="" id="" v-model="cable_size_mm2">
+                                <option value="6">6</option>
+                                <option value="10">10</option>
+                                <option value="16">16</option>
+                                <option value="25">25</option>
+                                <option value="35">35</option>
+                                <option value="50">50</option>
+                                <option value="70">70</option>
+                            </select>
+                        </td>
                     </tr>
-
                     <tr>
                         <td>Khởi tạo giá</td>
                         <td><input type="number" name="begin_price" id="begin_price" v-model="begin_price"
@@ -88,17 +96,17 @@
                     </tr>
                 </tbody>
             </table>
+
         </form>
+        <h1>Danh sách vật tư</h1>
+        <TableMerchandise/>
     </div>
-    <h1>Danh sách vật tư</h1>
-    <TableMerchandise />
 </template>
 
-
 <script setup>
-import TableMerchandise from '@/components/TableMerchandise.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import TableMerchandise from '@/components/TableMerchandise.vue'
 // const CONST_HOST = "http://localhost:8080"
 const CONST_HOST = "https://id.slmsolar.com"
 const brands = ref([])
@@ -110,70 +118,8 @@ const unit = ref('')
 const description_in_contract = ref('')
 const images = ref([])
 const phase_type = ref([]); // Khởi tạo phase_type là một mảng
-const warranty_years = ref('')
 const begin_price = ref(0)
-
-// hoàn thiện code 
-const route = useRoute();
-const loadBrands = async () => {
-    try {
-        const response = await fetch(`${CONST_HOST}/api/brands`);
-        if (response.ok) {
-            const data = await response.json();
-            brands.value = data;
-            if (brands.value.length > 0) {
-                choseBrand.value = brands.value[0].id
-            }
-        } else {
-            console.error('Failed to fetch brands:', response.statusText);
-        }
-    } catch (error) {
-        console.error('Error fetching brands:', error);
-    }
-}
-
-onMounted(() => {
-    loadBrands()
-});
-
-const createMerchandise = async () => {
-    const payload = {
-        brand_id: choseBrand.value,
-        code: code.value,
-        name: name.value,
-        data_sheet_link: data_sheet_link.value,
-        unit: unit.value,
-        description_in_contract: description_in_contract.value,
-        images: images.value,
-        data_json: {
-            installation_type: phase_type.value,
-            warranty_years: warranty_years.value
-        },
-        begin_price: begin_price.value,
-    };
-
-    try {
-        const response = await fetch(`${CONST_HOST}/api/products`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            alert('Tạo thành công!');
-            console.log('Created merchandise:', result);
-        } else {
-            console.error('Failed to create merchandise:', response.statusText);
-            alert('Tạo thất bại!');
-        }
-    } catch (error) {
-        console.error('Error creating merchandise:', error);
-        alert('Có lỗi xảy ra!');
-    }
-};
+const cable_size_mm2 = ref(6)
 
 const addImageInput = () => {
     images.value.push('')
@@ -181,6 +127,61 @@ const addImageInput = () => {
 const removeImage = (index) => {
     images.value.splice(index, 1); // Xóa ảnh tại vị trí `index`
 };
+
+const createMerchandise = async () => {
+    const payload = {
+        template_code: 'DC_AC_CABLE',
+        brand_id: choseBrand.value,
+        code: code.value,
+        name: name.value,
+        data_sheet_link: data_sheet_link.value,
+        unit: unit.value,
+        description_in_contract: description_in_contract.value,
+        data_json: {
+            phase_type: phase_type.value,
+            cable_size_mm2: cable_size_mm2.value
+        },
+        images: images.value,
+        begin_price: begin_price.value
+    }
+
+    try {
+        const response = await fetch(`${CONST_HOST}/api/products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to create merchandise')
+        }
+
+        const result = await response.json()
+        alert('Merchandise created successfully!')
+        console.log(result)
+    } catch (error) {
+        console.error(error)
+        alert('Error creating merchandise')
+    }
+}
+
+const loadBrands = async () => {
+    const response = await fetch(CONST_HOST + '/api/brands')
+    if (response.ok) {
+        const data = await response.json()
+        brands.value = data
+        choseBrand.value = data[0].id
+    } else {
+        console.error('Failed to load brands')
+    }
+}
+
+onMounted(async () => {
+    loadBrands()
+})
+
 </script>
 
 <style lang="css" scoped>

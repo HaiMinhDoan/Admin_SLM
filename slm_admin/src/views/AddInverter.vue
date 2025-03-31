@@ -131,9 +131,12 @@
             </table>
         </form>
     </div>
+    <h1>Danh sách vật tư</h1>
+    <TableMerchandise />
 </template>
 
 <script setup>
+import TableMerchandise from '@/components/TableMerchandise.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 // const CONST_HOST = "http://localhost:8080"

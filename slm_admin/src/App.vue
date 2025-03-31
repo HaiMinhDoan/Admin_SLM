@@ -6,16 +6,18 @@ import HelloWorld from './components/HelloWorld.vue'
 <template>
 
     <div id="app">
+        
         <div>
             <nav style="display: flex; justify-content: space-between; flex-direction: column;">
                 <RouterLink class="side_nav" to="/add-pin-pv">Thêm tấm pin PV</RouterLink>
                 <RouterLink class="side_nav" to="/add-inverter">Thêm biến tần</RouterLink>
                 <RouterLink class="side_nav" to="/add-battery">Thêm pin lưu trữ</RouterLink>
                 <RouterLink class="side_nav" to="/add-aluminum-frame">Thêm hệ khung nhôm</RouterLink>
+                <RouterLink class="side_nav" to="/add-cable">Thêm dây AC DC</RouterLink>
                 <RouterLink class="side_nav" to="/combo-create">Tạo Combo</RouterLink>
                 <RouterLink class="side_nav" to="/contract-create">Tạo Hợp đồng</RouterLink>
             </nav>
-        </div>
+        </div><br>
         <div style="width: 100%;">
             <RouterView />
         </div>

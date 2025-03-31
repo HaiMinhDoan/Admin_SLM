@@ -38,6 +38,11 @@ const router = createRouter({
       component: () => import('../views/AddAluminumFrame.vue'),
     },
     {
+      path: '/add-cable',
+      name: 'add-cable',
+      component: () => import('../views/AddCable.vue'),
+    },
+    {
       path: '/combo-create',
       name: 'combo-create',
       component: () => import('../views/ComboCreate.vue'),
