@@ -10,7 +10,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, rowIndex) in merchandises" :key="rowIndex">
+                <tr v-for="(item, rowIndex) in localMerchandises" :key="rowIndex">
                     <td class="excel-cell">{{ item.id }}</td>
                     <td class="excel-cell">{{ item.template?.name || '' }}</td>
                     <td class="excel-cell">{{ item.brand?.name || '' }}</td>
@@ -34,12 +34,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, defineProps } from 'vue'
 
 // const CONST_HOST = "http://localhost:8080"
 const CONST_HOST = "https://id.slmsolar.com"
-
-const merchandises = ref([])
+const props = defineProps({
+    merchandises: {
+        type: Array,
+        required: false,
+        default: () => []
+    }
+});
+// Biến nội bộ để lưu danh sách merchandises
+const localMerchandises = ref([]);
 
 const headers = [
     { label: 'ID', width: 80 },
@@ -56,25 +63,39 @@ const headers = [
     { label: 'Active', width: 100 }
 ]
 
-const getAllMerchandises = async () => {
+const loadMerchandises = async () => {
     try {
-        const response = await fetch(CONST_HOST + '/api/products', {
-            method: 'GET',
-        })
+        const response = await fetch(`${CONST_HOST}/api/products`, {
+            method: 'GET'
+        });
         if (response.ok) {
-            const data = await response.json()
-            merchandises.value = data
-            console.log('Data loaded successfully')
+            const data = await response.json();
+            localMerchandises.value = data; // Lưu dữ liệu vào biến nội bộ
+            console.log('Merchandises loaded successfully:', data);
         } else {
-            console.error('Failed to get merchandises')
+            console.error('Failed to load merchandises');
         }
     } catch (error) {
-        console.error('Error fetching data:', error)
+        console.error('Error loading merchandises:', error);
     }
-}
+};
+// Theo dõi prop `merchandises` để cập nhật danh sách
+watch(
+    () => props.merchandises,
+    (newMerchandises) => {
+        if (newMerchandises.length > 0) {
+            localMerchandises.value = newMerchandises; // Nếu có dữ liệu từ prop, sử dụng nó
+        } else {
+            loadMerchandises(); // Nếu không có, tự động tải từ API
+        }
+    },
+    { immediate: true } // Gọi ngay khi component được mount
+);
 
 onMounted(() => {
-    getAllMerchandises()
+    if (props.merchandises.length === 0) {
+        loadMerchandises();
+    }
 
     // Chờ một chút để DOM được render
     setTimeout(() => {
@@ -141,80 +162,6 @@ function initializeResizableTable() {
 </script>
 
 <style>
-/* .excel-table-container {
-    overflow-x: auto;
-    width: 100%;
-    margin-bottom: 20px;
-} */
-
-/* .excel-table {
-    border-collapse: collapse;
-    width: max-content;
-    min-width: 100%;
-    border: 1px solid #ddd;
-} */
-
-/* .excel-header {
-    position: relative;
-    background-color: #f2f2f2;
-    text-align: left;
-    padding: 8px;
-    border: 1px solid #ddd;
-    font-weight: bold;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-} */
-
-/* .excel-cell {
-    padding: 8px;
-    border: 1px solid #ddd;
-    max-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-} */
-
-/* .cell-content {
-    overflow-x: auto;
-    white-space: nowrap;
-    max-width: 100%;
-} */
-
-/* .excel-resizer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 5px;
-    height: 100%;
-    cursor: col-resize;
-    z-index: 1;
-} */
-
-/* .excel-resizer:hover,
-.resizing .excel-resizer {
-    background-color: #0077ff;
-} */
-
-/* .resizing {
-    background-color: #e6f2ff !important;
-    user-select: none;
-} */
-
-/* Thêm thanh cuộn ngang cho nội dung dài trong ô */
-/* .excel-cell:hover {
-    overflow: visible;
-    z-index: 1;
-} */
-
-/* .excel-cell:hover .cell-content {
-    background-color: white;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    position: absolute;
-    padding: 8px;
-    left: 0;
-    max-width: 300px;
-} */
 
 .excel-table-container {
     overflow-x: auto;

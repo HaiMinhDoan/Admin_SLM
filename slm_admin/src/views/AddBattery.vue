@@ -132,7 +132,7 @@
         </form>
     </div>
     <h1>Danh sách vật tư</h1>
-    <TableMerchandise />
+    <TableMerchandise :merchandises="merchandises" />
 </template>
 
 <script setup>
@@ -159,6 +159,7 @@ const cell_brand = ref(0)
 const installation_method = ref('')
 const warranty_years = ref(0)
 const begin_price = ref(0)
+const merchandises = ref([])
 
 const addImageInput = () => {
     images.value.push('')
@@ -224,8 +225,24 @@ const loadBrands = async () => {
     }
 }
 
+// Hàm tải danh sách merchandises
+const loadMerchandises = async () => {
+    try {
+        const response = await fetch(CONST_HOST+'/api/products');
+        if (response.ok) {
+            const data = await response.json();
+            merchandises.value = data; // Cập nhật danh sách merchandises
+        } else {
+            console.error('Failed to load merchandises');
+        }
+    } catch (error) {
+        console.error('Error loading merchandises:', error);
+    }
+};
+
 onMounted(async () => {
     loadBrands()
+    loadMerchandises()
 })
 
 </script>

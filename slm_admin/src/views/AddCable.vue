@@ -85,6 +85,11 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>Bảo hành</td>
+                        <td><input type="number" name="warranty_years" id="warranty_years" v-model="warranty_years"
+                                placeholder="Bảo hành"></td>
+                    </tr>
+                    <tr>
                         <td>Khởi tạo giá</td>
                         <td><input type="number" name="begin_price" id="begin_price" v-model="begin_price"
                                 placeholder="Khời tạo GM"></td>
@@ -99,7 +104,7 @@
 
         </form>
         <h1>Danh sách vật tư</h1>
-        <TableMerchandise/>
+        <TableMerchandise :merchandises="merchandises" />
     </div>
 </template>
 
@@ -120,6 +125,10 @@ const images = ref([])
 const phase_type = ref([]); // Khởi tạo phase_type là một mảng
 const begin_price = ref(0)
 const cable_size_mm2 = ref(6)
+const warranty_years = ref(0)
+
+
+const merchandises = ref([]);
 
 const addImageInput = () => {
     images.value.push('')
@@ -139,7 +148,8 @@ const createMerchandise = async () => {
         description_in_contract: description_in_contract.value,
         data_json: {
             phase_type: phase_type.value,
-            cable_size_mm2: cable_size_mm2.value
+            cable_size_mm2: cable_size_mm2.value,
+            warranty_years: warranty_years.value
         },
         images: images.value,
         begin_price: begin_price.value
@@ -160,6 +170,7 @@ const createMerchandise = async () => {
 
         const result = await response.json()
         alert('Merchandise created successfully!')
+        loadMerchandises()
         console.log(result)
     } catch (error) {
         console.error(error)
@@ -177,9 +188,24 @@ const loadBrands = async () => {
         console.error('Failed to load brands')
     }
 }
+// Hàm tải danh sách merchandises
+const loadMerchandises = async () => {
+    try {
+        const response = await fetch(CONST_HOST+'/api/products');
+        if (response.ok) {
+            const data = await response.json();
+            merchandises.value = data; // Cập nhật danh sách merchandises
+        } else {
+            console.error('Failed to load merchandises');
+        }
+    } catch (error) {
+        console.error('Error loading merchandises:', error);
+    }
+};
 
 onMounted(async () => {
     loadBrands()
+    loadMerchandises()
 })
 
 </script>
