@@ -741,7 +741,7 @@ const createContract = async () => {
         list_pre_quote_merchandise: sendingArray
     }
     console.log(JSON.stringify(sendingData))
-    const response = await fetch(CONST_HOST + '/api/pre_quote/contract_quote', {
+    const response = await fetch(CONST_HOST + '/api/pre_quote/contract_quote/old', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
