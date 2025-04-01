@@ -42,6 +42,11 @@
                                 v-model="description_in_contract"></textarea></td>
                     </tr>
                     <tr>
+                        <td>Mô tả trong hợp đồng</td>
+                        <td><textarea name="description_in_quotation" id="" cols="30" rows="10"
+                                v-model="description_in_quotation"></textarea></td>
+                    </tr>
+                    <tr>
                         <td>Ảnh</td>
                         <td>
                             <div v-for="(image, index) in images" :key="index" style="margin-bottom: 5px;">
@@ -126,6 +131,7 @@ const phase_type = ref([]); // Khởi tạo phase_type là một mảng
 const begin_price = ref(0)
 const cable_size_mm2 = ref(6)
 const warranty_years = ref(0)
+const description_in_quotation = ref('')
 
 
 const merchandises = ref([]);
@@ -147,6 +153,7 @@ const createMerchandise = async () => {
         data_sheet_link: data_sheet_link.value,
         unit: unit.value,
         description_in_contract: description_in_contract.value,
+        description_in_quotation: description_in_quotation.value,
         data_json: {
             phase_type: phase_type.value,
             cable_size_mm2: cable_size_mm2.value,

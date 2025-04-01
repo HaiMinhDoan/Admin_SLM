@@ -42,6 +42,11 @@
                                 v-model="description_in_contract"></textarea></td>
                     </tr>
                     <tr>
+                        <td>Mô tả trong báo giá</td>
+                        <td><textarea name="description_in_quotation" id="" cols="30" rows="10"
+                                v-model="description_in_quotation"></textarea></td>
+                    </tr>
+                    <tr>
                         <td>Ảnh</td>
                         <td>
                             <div v-for="(image, index) in images" :key="index" style="margin-bottom: 5px;">
@@ -129,6 +134,7 @@ const warranty_years = ref(0)
 const begin_price = ref(0)
 const merchandises = ref([])
 const installation_type = ref('Ongrid')
+const description_in_quotation =ref('')
 
 const addImageInput = () => {
     images.value.push('')
@@ -146,6 +152,7 @@ const createMerchandise = async () => {
         data_sheet_link: data_sheet_link.value,
         unit: unit.value,
         description_in_contract: description_in_contract.value,
+        description_in_quotation: description_in_quotation.value,
         data_json: {
             installation_type: installation_type.value,
             phase_type: phase_type.value,

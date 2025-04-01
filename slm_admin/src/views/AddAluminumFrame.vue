@@ -43,6 +43,11 @@
                                 v-model="description_in_contract"></textarea></td>
                     </tr>
                     <tr>
+                        <td>Mô tả trong báo giá</td>
+                        <td><textarea name="description_in_contract" id="" cols="30" rows="10"
+                                v-model="description_in_quotation"></textarea></td>
+                    </tr>
+                    <tr>
                         <td>Ảnh</td>
                         <td>
                             <div v-for="(image, index) in images" :key="index" style="margin-bottom: 5px;">
@@ -113,6 +118,7 @@ const installation_type = ref([]); // Khởi tạo installation_type là một m
 const warranty_years = ref('')
 const begin_price = ref(0)
 const merchandises = ref([])
+const description_in_quotation = ref('')
 // hoàn thiện code 
 const route = useRoute();
 const loadBrands = async () => {
@@ -162,6 +168,7 @@ const createMerchandise = async () => {
         data_sheet_link: data_sheet_link.value,
         unit: unit.value,
         description_in_contract: description_in_contract.value,
+        description_in_quotation: description_in_quotation.value,
         images: images.value,
         data_json: {
             installation_type: installation_type.value,
