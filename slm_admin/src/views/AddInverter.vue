@@ -59,7 +59,7 @@
                     <tr>
                         <td>Mô tả trong báo giá</td>
                         <td><textarea name="description_in_contract" id="" cols="30" rows="10"
-                                v-model="description_in_contract"></textarea></td>
+                                v-model="description_in_quotation"></textarea></td>
                     </tr>
                     <tr>
                         <td>Ảnh</td>
