@@ -171,6 +171,7 @@ const createMerchandise = async () => {
 
         const result = await response.json()
         alert('Merchandise created successfully!')
+        loadMerchandises()
         console.log(result)
     } catch (error) {
         console.error(error)

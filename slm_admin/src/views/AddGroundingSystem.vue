@@ -179,6 +179,7 @@ const createMerchandise = async () => {
         if (response.ok) {
             const result = await response.json();
             alert('Tạo thành công!');
+            loadMerchandises()
             console.log('Created merchandise:', result);
         } else {
             console.error('Failed to create merchandise:', response.statusText);
