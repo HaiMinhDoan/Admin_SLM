@@ -140,6 +140,7 @@ const removeImage = (index) => {
 const createMerchandise = async () => {
     const payload = {
         template_code: 'DC_AC_CABLE',
+        supplier_id: null,
         brand_id: choseBrand.value,
         code: code.value,
         name: name.value,

@@ -153,6 +153,8 @@ onMounted(async () => {
 
 const createMerchandise = async () => {
     const payload = {
+        template_code: 'GROUNDING_SYSTEM',
+        supplier_id: null,
         brand_id: choseBrand.value,
         code: code.value,
         name: name.value,

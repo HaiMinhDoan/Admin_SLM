@@ -172,6 +172,7 @@ const createMerchandise = async () => {
     const payload = {
         template_code: 'BATTERY_STORAGE',
         brand_id: choseBrand.value,
+        supplier_id: null,
         code: code.value,
         name: name.value,
         data_sheet_link: data_sheet_link.value,

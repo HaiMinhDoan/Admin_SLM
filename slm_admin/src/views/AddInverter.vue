@@ -166,6 +166,7 @@ const createMerchandise = async () => {
     const sendingData = {
         template_code: 'INVERTER_DC_AC',
         brand_id: choseBrand.value,
+        supplier_id: null,
         code: code.value,
         name: name.value,
         data_sheet_link: data_sheet_link.value,

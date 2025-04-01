@@ -154,6 +154,8 @@ onMounted(async () => {
 
 const createMerchandise = async () => {
     const payload = {
+        template_code: 'ALUMINUM_FRAME',
+        supplier_id: null,
         brand_id: choseBrand.value,
         code: code.value,
         name: name.value,
