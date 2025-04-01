@@ -23,6 +23,10 @@
                         <td><input type="text" name="name" id="name" v-model="name"></td>
                     </tr>
                     <tr>
+                        <td>Ảnh hợp đồng</td>
+                        <td><input type="text" name="image" id="image" v-model="image"></td>
+                    </tr>
+                    <tr>
                         <td colspan="6" style="">
                             <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin người bán</h2>
                         </td>
@@ -541,6 +545,7 @@ const pv_number = ref(0)
 const inverter_number = ref(0)
 const battery_number = ref(0)
 const solar_panel_cabinet_number = ref(0)
+const image = ref('')
 
 
 // Mảng lưu danh sách các "Hệ khung nhôm"
@@ -738,10 +743,11 @@ const createContract = async () => {
         installation_type: installation_type.value,
         total_price: total_price.value,
         kind: 'contract_quote',
+        image: image.value,
         list_pre_quote_merchandise: sendingArray
     }
     console.log(JSON.stringify(sendingData))
-    const response = await fetch(CONST_HOST + '/api/pre_quote/contract_quote/old', {
+    const response = await fetch(CONST_HOST + '/api/pre_quote/contract_quote/new', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

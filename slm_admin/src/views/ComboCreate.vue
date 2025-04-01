@@ -13,8 +13,12 @@
                         <td><input type="text" name="code" id="code" v-model="code"></td>
                     </tr>
                     <tr>
-                        <td>Tên báo giá</td>
+                        <td>Tên combo</td>
                         <td><input type="text" name="name" id="name" v-model="name"></td>
+                    </tr>
+                    <tr>
+                        <td>Ảnh combo</td>
+                        <td><input type="text" name="image" id="image" v-model="image"></td>
                     </tr>
                     <tr>
                         <td>Chọn hệ lắp đặt</td>
@@ -275,6 +279,7 @@ const solar_panel_cabinet = ref(0)
 const installation_type = ref('Ongrid')
 const phase_type = ref('1-phase')
 const aluminums_frame_installation_type = ref('All')
+const image = ref('')
 
 const pv_price = ref(0)
 const inverter_price = ref(0)
@@ -626,6 +631,7 @@ const createCombo = async () => {
         installation_type: installation_type.value,
         total_price: total_price.value,
         kind: 'combo',
+        image: image.value,
         list_pre_quote_merchandise: sendingArray
     }
     console.log(JSON.stringify(sendingData))
