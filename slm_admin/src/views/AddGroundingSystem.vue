@@ -6,7 +6,7 @@
                 <tbody>
                     <tr>
                         <td colspan="2">
-                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo hệ khung nhôm
+                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo hệ tiếp địa
                             </h1>
                         </td>
                     </tr>
@@ -54,19 +54,18 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Kiểu lắp đặt</td>
+                        <td>Đường kính dây</td>
                         <td>
-                            <div>
-                                <label>
-                                    <input type="checkbox" value="Áp mái tôn" v-model="installation_type"> Áp mái tôn
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" value="Mái ngói" v-model="installation_type"> Mái ngói
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" value="Khung sắt" v-model="installation_type"> Khung sắt
-                                </label>
-                            </div>
+                            <select name="" id="" v-model="wire_diameter_mm">
+                                <option value="4">4</option>
+                                <option value="6">6</option>
+                                <option value="10">10</option>
+                                <option value="16">16</option>
+                                <option value="25">25</option>
+                                <option value="35">35</option>
+                                <option value="50">50</option>
+                                <option value="70">70</option>
+                            </select>
                         </td>
                     </tr>
 
@@ -109,10 +108,10 @@ const data_sheet_link = ref('')
 const unit = ref('')
 const description_in_contract = ref('')
 const images = ref([])
-const installation_type = ref([]); // Khởi tạo installation_type là một mảng
 const warranty_years = ref('')
 const begin_price = ref(0)
 const merchandises = ref([])
+const wire_diameter_mm = ref(6)
 // hoàn thiện code 
 const route = useRoute();
 const loadBrands = async () => {
@@ -162,7 +161,7 @@ const createMerchandise = async () => {
         description_in_contract: description_in_contract.value,
         images: images.value,
         data_json: {
-            installation_type: installation_type.value,
+            wire_diameter_mm: wire_diameter_mm.value,
             warranty_years: warranty_years.value
         },
         begin_price: begin_price.value,

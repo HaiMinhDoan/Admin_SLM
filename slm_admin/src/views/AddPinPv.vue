@@ -160,7 +160,7 @@ const createMerchandise = async () => {
         }
     }
     console.log(JSON.stringify(sendingData))
-    const response = await fetch(CONST_HOST + '/api/products/add', {
+    const response = await fetch(CONST_HOST + '/api/products', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

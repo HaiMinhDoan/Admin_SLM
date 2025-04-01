@@ -34,8 +34,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, defineProps } from 'vue'
-
+import { ref, onMounted, watch } from 'vue'
 // const CONST_HOST = "http://localhost:8080"
 const CONST_HOST = "https://id.slmsolar.com"
 const props = defineProps({
@@ -104,79 +103,103 @@ onMounted(() => {
 })
 
 function initializeResizableTable() {
-    const table = document.getElementById('excel-like-table')
+    const table = document.getElementById('excel-like-table');
     if (!table) {
-        console.error('Table not found')
-        return
+        console.error('Table not found');
+        return;
     }
 
-    const cols = table.querySelectorAll('th')
+    const cols = table.querySelectorAll('th');
 
     // Thiết lập chiều rộng ban đầu cho các cột
     cols.forEach((col, i) => {
-        const width = headers[i]?.width || 100
-        col.style.width = `${width}px`
-        col.style.minWidth = `${width}px`
-    })
+        const width = headers[i]?.width || 100;
+        col.style.width = `${width}px`;
+        col.style.minWidth = `${width}px`;
+    });
 
     // Thêm sự kiện mousedown cho các resizer
     table.addEventListener('mousedown', function (e) {
         if (e.target.className === 'excel-resizer') {
-            const resizer = e.target
-            const th = resizer.parentElement
-
+            const resizer = e.target;
+            const th = resizer.parentElement;
+            
             // Vị trí X ban đầu
-            const startX = e.clientX
-
+            const startX = e.clientX;
+            
             // Chiều rộng ban đầu của cột
-            const startWidth = th.getBoundingClientRect().width
-
+            const startWidth = th.getBoundingClientRect().width;
+            
             // Thêm class khi đang resize
-            th.classList.add('resizing')
-
+            th.classList.add('resizing');
+            
             // Thêm sự kiện mousemove vào document
-            document.addEventListener('mousemove', handleMouseMove)
-
-            // Hàm xử lý mousemove
+            document.addEventListener('mousemove', handleMouseMove);
+            
             function handleMouseMove(e) {
-                // Tính toán chiều rộng mới (không nhỏ hơn 50px)
-                const width = Math.max(50, startWidth + e.clientX - startX)
-
-                // Áp dụng chiều rộng mới chỉ cho cột này
-                th.style.width = `${width}px`
-                th.style.minWidth = `${width}px`
+                // Tính toán sự thay đổi vị trí chuột
+                const deltaX = e.clientX - startX;
+                
+                // Tính chiều rộng mới với giới hạn tối thiểu 50px
+                const newWidth = Math.max(50, startWidth + deltaX);
+                
+                // Áp dụng chiều rộng mới chỉ cho cột đang được resize
+                th.style.width = `${newWidth}px`;
+                th.style.minWidth = `${newWidth}px`;
             }
-
+            
             // Xử lý sự kiện mouseup
             function handleMouseUp() {
-                th.classList.remove('resizing')
-                document.removeEventListener('mousemove', handleMouseMove)
-                document.removeEventListener('mouseup', handleMouseUp)
+                th.classList.remove('resizing');
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
             }
-
+            
             // Thêm sự kiện mouseup
-            document.addEventListener('mouseup', handleMouseUp)
+            document.addEventListener('mouseup', handleMouseUp);
         }
-    })
+    });
 }
 </script>
 
 <style>
-
 .excel-table-container {
     overflow-x: auto;
+    /* Cuộn ngang nếu nội dung quá rộng */
+    overflow-y: auto;
+    /* Cuộn dọc nếu nội dung quá cao */
+    max-height: 600px;
+    /* Giới hạn chiều cao của bảng (có thể tùy chỉnh) */
     width: 100%;
+    max-width: 100%;
+    /* Chiếm toàn bộ chiều rộng */
     margin-bottom: 20px;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    /* Đảm bảo header cố định hoạt động đúng */
 }
 
 .excel-table {
     border-collapse: collapse;
-    width: max-content;
-    min-width: 100%;
+    width: 100%;
+    /* Đảm bảo bảng chiếm toàn bộ chiều rộng container */
     font-family: 'Segoe UI', Arial, sans-serif;
     font-size: 14px;
+    table-layout: fixed;
+}
+
+thead {
+    position: sticky;
+    /* Giữ cố định header khi cuộn */
+    top: 0;
+    /* Cố định header ở đầu container */
+    z-index: 2;
+    /* Đảm bảo header nằm trên các nội dung khác */
+    background-color: #378a21;
+    /* Màu nền của header */
+    color: white;
+    /* Màu chữ của header */
 }
 
 .excel-header {
@@ -193,6 +216,8 @@ function initializeResizableTable() {
     text-overflow: ellipsis;
     height: 32px;
     box-sizing: border-box;
+    /* min-width: 50px;
+    max-width: 300px; */
 }
 
 .excel-header:hover {
@@ -248,22 +273,13 @@ tr:hover .excel-cell {
     user-select: none;
 }
 
-/* Improved hover effect for cells with long content */
-/* .excel-cell:hover .cell-content {
-    overflow: visible;
-    position: absolute;
-    background-color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    padding: 6px 8px;
-    border: 1px solid #bbb;
-    z-index: 10;
-    left: 0;
-    max-width: 300px;
-    white-space: normal;
-    word-break: break-word;
-} */
+.excel-table-container::-webkit-scrollbar {
+    width: 8px;
+    /* Độ rộng của scrollbar */
+    height: 8px;
+    /* Độ cao của scrollbar ngang */
+}
 
-/* Add Excel-like grid lines */
 .excel-table thead {
     border-bottom: 2px solid #a9a9a9;
 }
@@ -279,6 +295,7 @@ thead {
 .excel-table-container::-webkit-scrollbar {
     height: 10px;
     width: 10px;
+    background: #f1f1f1;
 }
 
 .excel-table-container::-webkit-scrollbar-track {

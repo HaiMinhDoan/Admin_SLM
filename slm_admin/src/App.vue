@@ -1,34 +1,33 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import SideBar from './components/SideBar.vue';
 </script>
 
 <template>
+    <div class="app-container">
+        <!-- Navbar bên trái -->
+        <SideBar/>
 
-    <div id="app">
-        
-        <div>
-            <nav style="display: flex; justify-content: space-between; flex-direction: column;">
-                <RouterLink class="side_nav" to="/add-pin-pv">Thêm tấm pin PV</RouterLink>
-                <RouterLink class="side_nav" to="/add-inverter">Thêm biến tần</RouterLink>
-                <RouterLink class="side_nav" to="/add-battery">Thêm pin lưu trữ</RouterLink>
-                <RouterLink class="side_nav" to="/add-aluminum-frame">Thêm hệ khung nhôm</RouterLink>
-                <RouterLink class="side_nav" to="/add-cable">Thêm dây AC DC</RouterLink>
-                <RouterLink class="side_nav" to="/combo-create">Tạo Combo</RouterLink>
-                <RouterLink class="side_nav" to="/contract-create">Tạo Hợp đồng</RouterLink>
-            </nav>
-        </div><br>
-        <div style="width: 100%;">
+        <!-- Nội dung chính -->
+        <div class="main-content">
             <RouterView />
         </div>
     </div>
-
 </template>
+
 <style lang="css">
-.side_nav {
-    white-space: nowrap;
-    /* Không cho xuống dòng */
-    width: 150px;
-    /* Đặt độ rộng tùy chỉnh */
+/* Container chính */
+.app-container {
+    display: flex;
+    height: 100vh; /* Chiều cao toàn màn hình */
+    margin: 0;
+    padding: 0;
+}
+
+/* Nội dung chính */
+.main-content {
+    flex: 1; /* Chiếm toàn bộ không gian còn lại */
+    padding: 20px; /* Khoảng cách bên trong */
+    overflow-y: auto; /* Cuộn dọc nếu nội dung quá dài */
 }
 </style>

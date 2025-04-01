@@ -6,7 +6,7 @@
                 <tbody>
                     <tr>
                         <td colspan="2">
-                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo biến tần</h1>
+                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo tủ điện</h1>
                         </td>
                     </tr>
                     <tr>
@@ -33,21 +33,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Chiều ngang(mm)</td>
-                        <td><input type="number" name="width_mm" id="width_mm" placeholder="Chiều ngang"
-                                v-model="width_mm" v-on:change=""></td>
-                    </tr>
-                    <tr>
-                        <td>Chiều cao(mm)</td>
-                        <td><input type="number" name="height_mm" id="height_mm" placeholder="Chiều cao"
-                                v-model="height_mm" v-on:change=""></td>
-                    </tr>
-                    <tr>
-                        <td>Độ dày(mm)</td>
-                        <td><input type="number" name="thickness_mm" id="thickness_mm" placeholder="Độ dày"
-                                v-model="thickness_mm"></td>
-                    </tr>
-                    <tr>
                         <td>Đơn vị</td>
                         <td><input type="text" name="unit" id="unit" placeholder="Đơn vị" required v-model="unit"></td>
                     </tr>
@@ -68,14 +53,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Công suất AC(KW)</td>
-                        <td><input type="number" name="ac_power_kw" id="ac_power_kw" placeholder="Công suất AC"
-                                v-model="ac_power_kw"></td>
-                    </tr>
-                    <tr>
-                        <td>Công suất max DC(KW)</td>
-                        <td><input type="number" name="dc_max_power_kw" id="dc_max_power_kw"
-                                placeholder="Công suất max DC" v-model="dc_max_power_kw">
+                        <td>Công suất tối đa(KW)</td>
+                        <td><input type="number" name="power_capacity_kw" id="power_capacity_kw"
+                                placeholder="Công suất tối đa(KW)" v-model="power_capacity_kw">
                         </td>
                     </tr>
                     <tr>
@@ -106,13 +86,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Xếp hạng biến tần</td>
-                        <td>
-                            <input type="text" name="inverter_rating" id="inverter_rating"
-                                placeholder="Xếp hạng biến tần" v-model="inverter_rating">
-                        </td>
-                    </tr>
-                    <tr>
                         <td>Bảo hành</td>
                         <td><input type="number" name="warranty_years" id="warranty_years" v-model="warranty_years"
                                 placeholder="Bảo hành"></td>
@@ -129,6 +102,7 @@
                     </tr>
                 </tbody>
             </table>
+
         </form>
     </div>
     <h1>Danh sách vật tư</h1>
@@ -148,58 +122,62 @@ const name = ref('')
 const data_sheet_link = ref('')
 const unit = ref('')
 const description_in_contract = ref('')
-const width_mm = ref(0)
-const height_mm = ref(0)
-const thickness_mm = ref(0)
 const images = ref([])
-const ac_power_kw = ref(0)
-const dc_max_power_kw = ref(0)
-const installation_type = ref('Ongrid')
 const phase_type = ref([]); // Khởi tạo phase_type là một mảng
-const inverter_rating = ref('')
+const power_capacity_kw = ref(0)
 const warranty_years = ref(0)
 const begin_price = ref(0)
-
 const merchandises = ref([])
+const installation_type = ref('Ongrid')
+
+const addImageInput = () => {
+    images.value.push('')
+}
+const removeImage = (index) => {
+    images.value.splice(index, 1); // Xóa ảnh tại vị trí `index`
+};
 
 const createMerchandise = async () => {
-    const sendingData = {
-        template_code: 'INVERTER_DC_AC',
+    const payload = {
+        template_code: 'BATTERY_STORAGE',
         brand_id: choseBrand.value,
         code: code.value,
         name: name.value,
         data_sheet_link: data_sheet_link.value,
         unit: unit.value,
         description_in_contract: description_in_contract.value,
-        images: images.value,
-        begin_price: begin_price.value,
         data_json: {
-            width_mm: width_mm.value,
-            height_mm: height_mm.value,
-            thickness_mm: thickness_mm.value,
-            ac_power_kw: ac_power_kw.value,
-            dc_max_power_kw: dc_max_power_kw.value,
             installation_type: installation_type.value,
             phase_type: phase_type.value,
-            inverter_rating: inverter_rating.value,
+            power_capacity_kw: power_capacity_kw.value,
             warranty_years: warranty_years.value
-        }
-    }
-    console.log(JSON.stringify(sendingData))
-    const response = await fetch(CONST_HOST + '/api/products', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(sendingData)
-    })
-    if (response.ok) {
-        const data = await response.json()
-        console.log(data)
-    } else {
-        console.error('Failed to create merchandise')
+        images: images.value,
+        begin_price: begin_price.value
+    }
+
+    try {
+        const response = await fetch(`${CONST_HOST}/api/products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+
+        if (!response.ok) {
+            throw new Error('Failed to create merchandise')
+        }
+
+        const result = await response.json()
+        alert('Merchandise created successfully!')
+        console.log(result)
+    } catch (error) {
+        console.error(error)
+        alert('Error creating merchandise')
     }
 }
+
 const loadBrands = async () => {
     const response = await fetch(CONST_HOST + '/api/brands')
     if (response.ok) {
@@ -210,12 +188,7 @@ const loadBrands = async () => {
         console.error('Failed to load brands')
     }
 }
-const addImageInput = () => {
-    images.value.push('') // Thêm một chuỗi rỗng vào mảng
-}
-const removeImage = (index) => {
-    images.value.splice(index, 1); // Xóa ảnh tại vị trí `index`
-};
+
 // Hàm tải danh sách merchandises
 const loadMerchandises = async () => {
     try {
@@ -235,6 +208,7 @@ onMounted(async () => {
     loadBrands()
     loadMerchandises()
 })
+
 </script>
 
 <style lang="css" scoped>

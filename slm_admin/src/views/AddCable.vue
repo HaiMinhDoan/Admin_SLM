@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="display: flex; align-items: center;">
         <form action="#" method="get" style="">
             <input type="text" hidden name="template_id" value="2">
             <table border="solid">
