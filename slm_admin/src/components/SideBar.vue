@@ -8,6 +8,7 @@
         <RouterLink class="side-nav-link" to="/add-grounding-system">Thêm hệ tiếp địa</RouterLink>
         <RouterLink class="side-nav-link" to="/combo-create">Tạo Combo</RouterLink>
         <RouterLink class="side-nav-link" to="/contract-create">Tạo Hợp đồng</RouterLink>
+        <RouterLink class="side-nav-link" to="/add-content">Tạo nội dung</RouterLink>
     </nav>
 </template>
 

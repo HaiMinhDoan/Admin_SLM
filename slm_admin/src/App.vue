@@ -28,6 +28,5 @@ import SideBar from './components/SideBar.vue';
 .main-content {
     flex: 1; /* Chiếm toàn bộ không gian còn lại */
     padding: 20px; /* Khoảng cách bên trong */
-    overflow-y: auto; /* Cuộn dọc nếu nội dung quá dài */
 }
 </style>

@@ -53,6 +53,11 @@ const router = createRouter({
       path: '/contract-create',
       name: 'contract-create',
       component: () => import('../views/ContractCreate.vue'),
+    },
+    {
+      path: '/add-content',
+      name: 'add-content',
+      component: () => import('../views/AddContent.vue'),
     }
   ],
 })
