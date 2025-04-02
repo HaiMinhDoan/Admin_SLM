@@ -145,7 +145,7 @@ const removeImage = (index) => {
 
 const createMerchandise = async () => {
     const payload = {
-        template_code: 'BATTERY_STORAGE',
+        template_code: 'SOLAR_PANEL_CABINET',
         brand_id: choseBrand.value,
         code: code.value,
         name: name.value,
