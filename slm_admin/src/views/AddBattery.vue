@@ -48,6 +48,11 @@
                                 v-model="thickness_mm"></td>
                     </tr>
                     <tr>
+                        <td>Khối lượng(kg)</td>
+                        <td><input type="number" name="weight_kg" id="weight_kg" placeholder="Khối lượng"
+                                v-model="weight_kg"></td>
+                    </tr>
+                    <tr>
                         <td>Đơn vị</td>
                         <td><input type="text" name="unit" id="unit" placeholder="Đơn vị" required v-model="unit"></td>
                     </tr>
@@ -156,6 +161,7 @@ const description_in_contract = ref('')
 const width_mm = ref(0)
 const height_mm = ref(0)
 const thickness_mm = ref(0)
+const weight_kg = ref(0)
 const images = ref([])
 const phase_type = ref([]); // Khởi tạo phase_type là một mảng
 const storage_capacity_kwh = ref(0)
@@ -189,6 +195,7 @@ const createMerchandise = async () => {
             width_mm: width_mm.value,
             height_mm: height_mm.value,
             thickness_mm: thickness_mm.value,
+            weight_kg: weight_kg.value,
             storage_capacity_kwh: storage_capacity_kwh.value,
             max_upgrade_kwh: max_upgrade_kwh.value,
             phase_type: phase_type.value,

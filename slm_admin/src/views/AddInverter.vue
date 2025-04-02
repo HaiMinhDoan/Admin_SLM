@@ -48,6 +48,11 @@
                                 v-model="thickness_mm"></td>
                     </tr>
                     <tr>
+                        <td>Khối lượng(kg)</td>
+                        <td><input type="number" name="weight_kg" id="weight_kg" placeholder="Khối lượng"
+                                v-model="weight_kg"></td>
+                    </tr>
+                    <tr>
                         <td>Đơn vị</td>
                         <td><input type="text" name="unit" id="unit" placeholder="Đơn vị" required v-model="unit"></td>
                     </tr>
@@ -156,6 +161,7 @@ const description_in_contract = ref('')
 const width_mm = ref(0)
 const height_mm = ref(0)
 const thickness_mm = ref(0)
+const weight_kg = ref(0)
 const images = ref([])
 const ac_power_kw = ref(0)
 const dc_max_power_kw = ref(0)
@@ -185,6 +191,7 @@ const createMerchandise = async () => {
             width_mm: width_mm.value,
             height_mm: height_mm.value,
             thickness_mm: thickness_mm.value,
+            weight_kg: weight_kg.value,
             ac_power_kw: ac_power_kw.value,
             dc_max_power_kw: dc_max_power_kw.value,
             installation_type: installation_type.value,
