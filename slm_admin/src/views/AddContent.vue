@@ -10,18 +10,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Mã Content</td>
-                        <td><input type="text" name="" id="code" v-model="code"></td>
-                    </tr>
-                    <tr>
-                        <td>Tên Content</td>
-                        <td><input type="text" name="" id="name" v-model="name"></td>
-                    </tr>
-                    <tr>
-                        <td>Mô tả</td>
-                        <td><textarea name="description" id="description" v-model="description"></textarea></td>
-                    </tr>
-                    <tr>
                         <td>Loại content</td>
                         <td>
                             <select name="selectedCategory" id="selectedCategory" v-model="selectedCategory">
@@ -337,12 +325,9 @@ function onReady(editor) {
 
 
 const content_categories = ref([])
-const description = ref('')
 const title = ref('')
-const name = ref('')
 const hashtag = ref('')
 const content = ref('')
-const code = ref('')
 const selectedCategory = ref(0)
 const mediaList = ref([]); // Mảng lưu trữ danh sách media
 const newMedia = ref({
@@ -399,9 +384,6 @@ const fetchContentCategories = async () => {
 
 const createContent = async () => {
     const payload = {
-        code: code.value,
-        name: name.value,
-        description: description.value,
         content_category_id: selectedCategory.value,
         title: title.value,
         hashtag: hashtag.value,
