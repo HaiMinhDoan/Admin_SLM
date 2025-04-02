@@ -94,6 +94,12 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>Thời gian bắt đầu bảo hành</td>
+                        <td>
+                            <input type="date" name="created_at" id="created_at" v-model="created_at" v-on:change="">
+                        </td>
+                    </tr>
+                    <tr>
                         <td>Chọn hệ lắp đặt</td>
                         <td>
                             <select name="installation_type" id="installation_type" v-model="installation_type"
@@ -246,7 +252,8 @@
                                 </select><br>
                                 Số lượng(mét): <input type="number" v-model="cable.quantity" placeholder="Số lượng"><br>
                                 Giá/đơn vị: <input type="number" v-model="cable.price" placeholder="Giá"><br>
-                                GM: <input type="number" name="" id="" v-model="cable.gm" min="0" v-on:change="">
+                                GM: <input type="number" name="" id="" v-model="cable.gm" min="0" v-on:change=""><br>
+                                Thời gian bảo hành (năm): <input type="number" name="" id="" v-model="cable.warranty_years" min="0" v-on:change="">
                                 <button type="button" @click="removeDcAcCable(index)">Xóa</button>
                             </div>
                             <button type="button" @click="addDcAcCable">Thêm Dây cáp DC/AC</button>
@@ -293,7 +300,7 @@
                                 Số lượng: <input type="number" v-model="grounding.quantity" placeholder="Số lượng"><br>
                                 Giá/đơn vị: <input type="number" v-model="grounding.price" placeholder="Giá"><br>
                                 GM: <input type="number" v-model="grounding.gm" min="0"><br>
-                                Bảo hành: <input type="number" v-model="grounding.warranty_years" min="0"><br>
+                                Thời gian bảo hành (năm): <input type="number" v-model="grounding.warranty_years" min="0"><br>
                                 <button type="button" @click="removeGroundingSystem(index)">Xóa</button>
                             </div>
                             <button type="button" @click="addGroundingSystem()">Thêm Hệ tiếp địa</button>
@@ -359,6 +366,11 @@ const CONST_HOST = "https://id.slmsolar.com"
 const code = ref('')
 const name = ref('')
 const customer_code = ref('')
+const created_at = ref(new Date())
+
+function printTime(){
+    console.log(created_at.value)
+}
 const customer_name = ref('')
 const customer_address = ref('')
 const customer_phone = ref('')
@@ -450,6 +462,7 @@ const calcFramePrice = () => {
                 // Lấy giá từ danh sách `aluminums_frames`
                 let priceInfo = aluminums_frames.value[i].price_infos;
                 let gm = aluminums_frames.value[i].template.gm
+                let warranty_years = aluminums_frames.value[i].data_json?.warranty_years
                 if (priceInfo && priceInfo.length > 0) {
                     if (aluminums_frames_list.value[j].price === 0) {
                         aluminums_frames_list.value[j].price = priceInfo[0].import_price_include_vat;
@@ -460,6 +473,7 @@ const calcFramePrice = () => {
                     }
                 }
                 aluminums_frames_list.value[j].gm = gm
+                aluminums_frames_list.value[j].warranty_years = warranty_years
                 break;
             }
         }
@@ -474,6 +488,7 @@ const calcCablePrice = () => {
                 // Lấy giá từ danh sách `dc_ac_cables`
                 let priceInfo = dc_ac_cables.value[i].price_infos;
                 let gm = dc_ac_cables.value[i].template.gm
+                let warranty_years = dc_ac_cables.value[i].warranty_years
                 if (priceInfo && priceInfo.length > 0) {
                     if (dc_ac_cables_list.value[j].price === 0) {
                         dc_ac_cables_list.value[j].price = priceInfo[0].import_price_include_vat;
@@ -484,6 +499,7 @@ const calcCablePrice = () => {
                     }
                 }
                 dc_ac_cables_list.value[j].gm = gm
+                dc_ac_cables_list.value[j].warranty_years = warranty_years
                 break;
             }
         }
@@ -509,7 +525,8 @@ const calcGroundSystemPrice = (id) => {
             grounding_systems_list.value.forEach(
                 (grounding) => {
                     if (grounding.selected === id) {
-                        grounding.warranty = merchandise.data_json?.warranty_years || 0
+                        console.log('có giá')
+                        grounding.warranty_years = merchandise.data_json.warranty_years
                         if (merchandise.price_infos.length != 0) {
                             grounding.price = merchandise.price_infos[0].import_price_include_vat;
                         }
@@ -723,13 +740,15 @@ const createContract = async () => {
             merchandise_id: pv.value,
             quantity: pv_number.value,
             price: pv_price.value,
-            gm: pv_gm.value
+            gm: pv_gm.value,
+            warranty_years: pv_warranty.value
         },
         {
             merchandise_id: solar_panel_cabinet.value,
             quantity: solar_panel_cabinet_number.value,
             price: solar_panel_cabinet_price.value,
-            gm: solar_panel_cabinet_gm.value
+            gm: solar_panel_cabinet_gm.value,
+            warranty_years: solar_panel_cabinet_warranty.value
         }
     ];
     // Thêm biến tần
@@ -762,7 +781,8 @@ const createContract = async () => {
             merchandise_id: item.selected,
             quantity: item.quantity,
             price: item.price,
-            gm: item.gm
+            gm: item.gm,
+            warranty_years: item.warranty_years
         });
     }
     for (let i = 0; i < dc_ac_cables_list.value.length; i++) {
@@ -771,7 +791,8 @@ const createContract = async () => {
             merchandise_id: item.selected,
             quantity: item.quantity,
             price: item.price,
-            gm: item.gm
+            gm: item.gm,
+            warranty_years: item.warranty_years
         })
     }
     for (let i = 0; i < grounding_systems_list.value.length; i++) {
@@ -780,7 +801,8 @@ const createContract = async () => {
             merchandise_id: item.selected,
             quantity: item.quantity,
             price: item.price,
-            gm: item.gm
+            gm: item.gm,
+            warranty_years: item.warranty_years
         });
     }
 
@@ -790,7 +812,8 @@ const createContract = async () => {
             merchandise_id: item.selected,
             quantity: item.quantity,
             price: item.price,
-            gm: item.gm
+            gm: item.gm,
+            warranty_years: 0
         });
     }
     const sendingData = {
@@ -810,6 +833,7 @@ const createContract = async () => {
         total_price: total_price.value,
         kind: 'contract_quote',
         image: image.value,
+        created_at: created_at.value,
         list_pre_quote_merchandise: sendingArray
     }
     console.log(JSON.stringify(sendingData))
@@ -870,7 +894,7 @@ const removeDcAcCable = (index) => {
 }
 // Hàm thêm một mục "Hệ khung nhôm"
 const addAluminumFrame = () => {
-    aluminums_frames_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10, w })
+    aluminums_frames_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10, warranty_years:0 })
 }
 
 // Hàm xóa một mục "Hệ khung nhôm"
