@@ -71,6 +71,7 @@
                         <td>Tiết diện dây</td>
                         <td>
                             <select name="" id="" v-model="cable_size_mm2">
+                                <option :value="null">-</option>
                                 <option value="6">6</option>
                                 <option value="10">10</option>
                                 <option value="16">16</option>
