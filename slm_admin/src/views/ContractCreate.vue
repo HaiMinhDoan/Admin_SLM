@@ -11,7 +11,8 @@
                     </tr>
                     <tr>
                         <td colspan="6" style="">
-                            <h2 style="display: flex; flex-direction: column; align-items: center;">Tiêu đề hợp đồng</h2>
+                            <h2 style="display: flex; flex-direction: column; align-items: center;">Tiêu đề hợp đồng
+                            </h2>
                         </td>
                     </tr>
                     <tr>
@@ -28,7 +29,8 @@
                     </tr>
                     <tr>
                         <td colspan="6" style="">
-                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin người bán</h2>
+                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin người bán
+                            </h2>
                         </td>
                     </tr>
                     <tr>
@@ -57,7 +59,8 @@
                     </tr>
                     <tr>
                         <td colspan="6" style="">
-                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin khách hàng</h2>
+                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin khách hàng
+                            </h2>
                         </td>
                     </tr>
                     <tr>
@@ -86,7 +89,8 @@
                     </tr>
                     <tr>
                         <td colspan="6" style="">
-                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin lắp đặt</h2>
+                            <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin lắp đặt
+                            </h2>
                         </td>
                     </tr>
                     <tr>
@@ -152,44 +156,43 @@
                     <tr>
                         <td>Biến tần</td>
                         <td>
-                            <select name="inverter" id="inverter" v-model="inverter"
-                                v-on:change="calcInvPrice(inverter)">
-                                <option v-for="merchandise in inverters_show" :value="merchandise.id">{{
-                                    merchandise.name }}</option>
-                            </select>
-                        </td>
-                        <td>
-                            Số lượng:
-                            <input type="number" name="" id="" v-model="inverter_number">
-                        </td>
-                        <td>
-                            Giá:
-                            <input type="number" name="" id="" v-model="inverter_price">
-                        </td>
-                        <td>
-                            GM:
-                            <input type="number" name="" id="" v-model="inverter_gm" min="0" v-on:change="">
+                            <div v-for="(inverter, index) in inverters_list" :key="index" style="margin-bottom: 10px;">
+                                Loại:
+                                <select v-model="inverter.selected" v-on:change="calcInvPrice(inverter.selected)">
+                                    <option v-for="merchandise in inverters_show" :value="merchandise.id">
+                                        {{ merchandise.name }}
+                                    </option>
+                                </select><br>
+                                Số lượng:
+                                <input type="number" v-model="inverter.quantity" placeholder="Số lượng" min="0"><br>
+                                Giá/đơn vị:
+                                <input type="number" v-model="inverter.price" placeholder="Giá" min="0"><br>
+                                GM:
+                                <input type="number" v-model="inverter.gm" placeholder="GM" min="0"><br>
+                                <button type="button" @click="removeInverter(index)">Xóa</button>
+                            </div>
+                            <button type="button" @click="addInverter">Thêm Biến tần</button>
                         </td>
                     </tr>
                     <tr>
                         <td>Pin lưu trữ</td>
                         <td>
-                            <select name="battery" id="battery" v-model="battery" v-on:change="calcBaPrice(battery)">
-                                <option v-for="merchandise in batteries_show" :value="merchandise.id">{{
-                                    merchandise.name }}</option>
-                            </select>
-                        </td>
-                        <td>
-                            Số lượng:
-                            <input type="number" name="" id="" v-model="battery_number">
-                        </td>
-                        <td>
-                            Giá:
-                            <input type="number" name="" id="" v-model="battery_price">
-                        </td>
-                        <td>
-                            GM:
-                            <input type="number" name="" id="" v-model="battery_gm" min="0" v-on:change="">
+                            <div v-for="(battery, index) in batteries_list" :key="index" style="margin-bottom: 10px;">
+                                Loại:
+                                <select v-model="battery.selected" v-on:change="calcBaPrice(battery.selected)">
+                                    <option v-for="merchandise in batteries_show" :value="merchandise.id">
+                                        {{ merchandise.name }}
+                                    </option>
+                                </select><br>
+                                Số lượng:
+                                <input type="number" v-model="battery.quantity" placeholder="Số lượng" min="0"><br>
+                                Giá/đơn vị:
+                                <input type="number" v-model="battery.price" placeholder="Giá" min="0"><br>
+                                GM:
+                                <input type="number" v-model="battery.gm" placeholder="GM" min="0"><br>
+                                <button type="button" @click="removeBattery(index)">Xóa</button>
+                            </div>
+                            <button type="button" @click="addBattery">Thêm Pin lưu trữ</button>
                         </td>
                     </tr>
                     <tr>
@@ -516,12 +519,12 @@ const hoveredSale = ref(null); // Sale đang được hover
 // Hàm lọc danh sách sale dựa trên giá trị nhập
 const filterSales = () => {
     const search = sale_search.value.toLowerCase();
-    if(search === ''|| search === null){
+    if (search === '' || search === null) {
         filtered_sales.value = []
         return
     }
-    filtered_sales.value = sales.value.filter(sale => 
-        sale.name.toLowerCase().includes(search) || 
+    filtered_sales.value = sales.value.filter(sale =>
+        sale.name.toLowerCase().includes(search) ||
         sale.phone.includes(search)
     );
 };
@@ -556,6 +559,8 @@ const dc_ac_cables_list = ref([])
 const grounding_systems_list = ref([]);
 // Mảng lưu danh sách các "Trọn gói lắp đặt"
 const installation_packages_list = ref([]);
+const inverters_list = ref([]); // Mảng lưu danh sách các biến tần
+const batteries_list = ref([]); // Mảng lưu danh sách các pin lưu trữ
 
 const dc_ac_cables = ref([])
 const dc_ac_cables_show = ref([])
@@ -570,11 +575,17 @@ const calculateTotalPrice = () => {
     // Tính giá cho tấm pin mặt trời
     total += pv_number.value * pv_price.value * (1 + pv_gm.value / 100);
 
-    // Tính giá cho biến tần
-    total += inverter_number.value * inverter_price.value * (1 + inverter_gm.value / 100);
+    // Tính giá cho từng biến tần
+    for (let i = 0; i < inverters_list.value.length; i++) {
+        const inverter = inverters_list.value[i];
+        total += inverter.quantity * inverter.price * (1 + inverter.gm / 100);
+    }
 
-    // Tính giá cho pin lưu trữ
-    total += battery_number.value * battery_price.value * (1 + battery_gm.value / 100);
+    // Tính giá cho từng pin lưu trữ
+    for (let i = 0; i < batteries_list.value.length; i++) {
+        const battery = batteries_list.value[i];
+        total += battery.quantity * battery.price * (1 + battery.gm / 100);
+    }
 
     // Tính giá cho tủ điện NLMT
     total += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value * (1 + solar_panel_cabinet_gm.value / 100);
@@ -614,13 +625,19 @@ const calculateTotalGM = () => {
     totalGMValue += pv_number.value * pv_price.value * (pv_gm.value / 100);
     totalValue += pv_number.value * pv_price.value;
 
-    // Tính GM và giá trị cho biến tần
-    totalGMValue += inverter_number.value * inverter_price.value * (inverter_gm.value / 100);
-    totalValue += inverter_number.value * inverter_price.value;
+    // Tính GM và giá trị cho từng biến tần
+    for (let i = 0; i < inverters_list.value.length; i++) {
+        const inverter = inverters_list.value[i];
+        totalGMValue += inverter.quantity * inverter.price * (inverter.gm / 100);
+        totalValue += inverter.quantity * inverter.price;
+    }
 
-    // Tính GM và giá trị cho pin lưu trữ
-    totalGMValue += battery_number.value * battery_price.value * (battery_gm.value / 100);
-    totalValue += battery_number.value * battery_price.value;
+    // Tính GM và giá trị cho từng pin lưu trữ
+    for (let i = 0; i < batteries_list.value.length; i++) {
+        const battery = batteries_list.value[i];
+        totalGMValue += battery.quantity * battery.price * (battery.gm / 100);
+        totalValue += battery.quantity * battery.price;
+    }
 
     // Tính GM và giá trị cho tủ điện NLMT
     totalGMValue += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value * (solar_panel_cabinet_gm.value / 100);
@@ -670,25 +687,31 @@ const createContract = async () => {
             gm: pv_gm.value
         },
         {
-            merchandise_id: inverter.value,
-            quantity: inverter_number.value,
-            price: inverter_price.value,
-            gm: inverter_gm.value
-        },
-        {
             merchandise_id: solar_panel_cabinet.value,
             quantity: solar_panel_cabinet_number.value,
             price: solar_panel_cabinet_price.value,
             gm: solar_panel_cabinet_gm.value
         }
     ];
-    if (installation_type.value === 'Hybrid') {
+    for (let i = 0; i < inverters_list.value.length; i++) {
+        const item = toRaw(inverters_list.value[i]);
         sendingArray.push({
-            merchandise_id: battery.value,
-            quantity: battery_number.value,
-            price: battery_price.value,
-            gm: battery_gm.value
+            merchandise_id: item.selected,
+            quantity: item.quantity,
+            price: item.price,
+            gm: item.gm
         });
+    }
+    if (installation_type.value === 'Hybrid') {
+        for (let i = 0; i < batteries_list.value.length; i++) {
+            const item = toRaw(batteries_list.value[i]);
+            sendingArray.push({
+                merchandise_id: item.selected,
+                quantity: item.quantity,
+                price: item.price,
+                gm: item.gm
+            });
+        }
     }
     for (let i = 0; i < aluminums_frames_list.value.length; i++) {
         const item = toRaw(aluminums_frames_list.value[i]);
@@ -733,7 +756,7 @@ const createContract = async () => {
         name: name.value,
         customer_id: null,
         sale_id: sale_id.value,
-        customer_code:customer_code.value,
+        customer_code: customer_code.value,
         customer_name: customer_name.value,
         customer_address: customer_address.value,
         customer_phone: customer_phone.value,
@@ -823,8 +846,28 @@ const addInstallationPackage = () => {
     installation_packages_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10 });
 };
 
+// Hàm thêm một mục "Biến tần"
+const addInverter = () => {
+    inverters_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10 });
+};
+
+// Hàm xóa một mục "Biến tần"
+const removeInverter = (index) => {
+    inverters_list.value.splice(index, 1);
+};
+
 const removeInstallationPackage = (index) => {
     installation_packages_list.value.splice(index, 1);
+};
+
+// Hàm thêm một mục "Pin lưu trữ"
+const addBattery = () => {
+    batteries_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10 });
+};
+
+// Hàm xóa một mục "Pin lưu trữ"
+const removeBattery = (index) => {
+    batteries_list.value.splice(index, 1);
 };
 for (let i = 0; i < grounding_systems_list.value.length; i++) {
     const item = toRaw(grounding_systems_list.value[i]);
