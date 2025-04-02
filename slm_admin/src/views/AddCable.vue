@@ -1,7 +1,6 @@
 <template>
-    <div style="display: flex; align-items: center;">
+    <div>
         <form action="#" method="get" style="">
-            <input type="text" hidden name="template_id" value="2">
             <table border="solid">
                 <tbody>
                     <tr>
@@ -26,13 +25,6 @@
                         <td><input type="text" name="name" id="name" placeholder="Tên" required v-model="name"></td>
                     </tr>
                     <tr>
-                        <td>Link data sheet</td>
-                        <td>
-                            <input type="text" name="data_sheet_link" id="data_sheet_link" placeholder="Data sheet link"
-                                required v-model="data_sheet_link">
-                        </td>
-                    </tr>
-                    <tr>
                         <td>Đơn vị</td>
                         <td><input type="text" name="unit" id="unit" placeholder="Đơn vị" required v-model="unit"></td>
                     </tr>
@@ -42,7 +34,7 @@
                                 v-model="description_in_contract"></textarea></td>
                     </tr>
                     <tr>
-                        <td>Mô tả trong hợp đồng</td>
+                        <td>Mô tả trong báo giá</td>
                         <td><textarea name="description_in_quotation" id="" cols="30" rows="10"
                                 v-model="description_in_quotation"></textarea></td>
                     </tr>
@@ -123,7 +115,6 @@ const brands = ref([])
 const choseBrand = ref(0)
 const code = ref('')
 const name = ref('')
-const data_sheet_link = ref('')
 const unit = ref('')
 const description_in_contract = ref('')
 const images = ref([])
@@ -150,7 +141,7 @@ const createMerchandise = async () => {
         brand_id: choseBrand.value,
         code: code.value,
         name: name.value,
-        data_sheet_link: data_sheet_link.value,
+        data_sheet_link: '',
         unit: unit.value,
         description_in_contract: description_in_contract.value,
         description_in_quotation: description_in_quotation.value,

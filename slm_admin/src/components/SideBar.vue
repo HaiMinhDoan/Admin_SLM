@@ -4,8 +4,10 @@
         <RouterLink class="side-nav-link" to="/add-inverter">Thêm biến tần</RouterLink>
         <RouterLink class="side-nav-link" to="/add-battery">Thêm pin lưu trữ</RouterLink>
         <RouterLink class="side-nav-link" to="/add-aluminum-frame">Thêm hệ khung nhôm</RouterLink>
+        <RouterLink class="side-nav-link" to="/add-cable">Thêm dây điện</RouterLink>
         <RouterLink class="side-nav-link" to="/add-cabinet">Thêm tủ điện</RouterLink>
         <RouterLink class="side-nav-link" to="/add-grounding-system">Thêm hệ tiếp địa</RouterLink>
+        <RouterLink class="side-nav-link" to="/add-installation">Thêm gói lắp đặt</RouterLink>
         <RouterLink class="side-nav-link" to="/combo-create">Tạo Combo</RouterLink>
         <RouterLink class="side-nav-link" to="/contract-create">Tạo Hợp đồng mới</RouterLink>
         <RouterLink class="side-nav-link" to="/contract-create-old">Tạo Hợp đồng cũ</RouterLink>

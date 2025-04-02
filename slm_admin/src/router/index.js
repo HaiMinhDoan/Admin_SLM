@@ -45,6 +45,11 @@ const router = createRouter({
       component: () => import('../views/AddGroundingSystem.vue'),
     },
     {
+      path: '/add-installation',
+      name: 'add-installation',
+      component: () => import('../views/AddInstallation.vue'),
+    },
+    {
       path: '/combo-create',
       name: 'combo-create',
       component: () => import('../views/ComboCreate.vue'),

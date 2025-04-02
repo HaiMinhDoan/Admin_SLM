@@ -72,10 +72,6 @@
                         <td><input type="text" name="" id="" v-model="customer_name"></td>
                     </tr>
                     <tr>
-                        <td>Địa chỉ khách hàng</td>
-                        <td><input type="text" name="" id="" v-model="customer_address"></td>
-                    </tr>
-                    <tr>
                         <td>SĐT khách hàng</td>
                         <td><input type="text" name="" id="" v-model="customer_phone"></td>
                     </tr>
@@ -88,6 +84,31 @@
                         <td><input type="text" name="" id="" v-model="customer_tax_code"></td>
                     </tr>
                     <tr>
+                        <td>Tỉnh</td>
+                        <td><input type="text" name="" id="" v-model="customer_province"></td>
+                    </tr>
+                    <tr>
+                        <td>Huyện</td>
+                        <td><input type="text" name="" id="" v-model="customer_district"></td>
+                    </tr>
+                    <tr>
+                        <td>Phường</td>
+                        <td><input type="text" name="" id="" v-model="customer_ward"></td>
+                    </tr>
+                    <tr>
+                        <td>Giới tính</td>
+                        <td>
+                            <select name="customer_gender" id="customer_gender" v-model="customer_gender">
+                                <option value="true">Nam</option>
+                                <option value="false">Nữ</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Địa chỉ cụ thể khách hàng</td>
+                        <td><input type="text" name="" id="" v-model="customer_address"></td>
+                    </tr>
+                    <tr>
                         <td colspan="6" style="">
                             <h2 style="display: flex; flex-direction: column; align-items: center;">Thông tin lắp đặt
                             </h2>
@@ -96,7 +117,7 @@
                     <tr>
                         <td>Thời gian bắt đầu bảo hành</td>
                         <td>
-                            <input type="date" name="created_at" id="created_at" v-model="created_at" v-on:change="printTime()">
+                            <input type="date" name="created_at" id="created_at" v-model="created_at" v-on:change="">
                         </td>
                     </tr>
                     <tr>
@@ -366,7 +387,7 @@ const CONST_HOST = "https://id.slmsolar.com"
 const code = ref('')
 const name = ref('')
 const customer_code = ref('')
-const created_at = ref(null)
+const created_at = ref(new Date())
 
 function printTime(){
     console.log(created_at.value)
@@ -376,6 +397,10 @@ const customer_address = ref('')
 const customer_phone = ref('')
 const customer_email = ref('')
 const customer_tax_code = ref('')
+const customer_province = ref('')
+const customer_district = ref('')
+const customer_ward = ref('')
+const customer_gender = ref(true)
 const total_price = ref(0)
 const total_gm = ref(0)
 const kind = ref('combo')
@@ -828,6 +853,10 @@ const createContract = async () => {
         customer_phone: customer_phone.value,
         customer_email: customer_email.value,
         customer_tax_code: customer_tax_code.value,
+        customer_province: customer_province.value,
+        customer_district: customer_district.value,
+        customer_ward: customer_ward.value,
+        customer_gender: customer_gender.value,
         status: 'accepted',
         installation_type: installation_type.value,
         total_price: total_price.value,

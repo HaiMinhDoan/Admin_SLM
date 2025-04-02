@@ -26,13 +26,6 @@
                         <td><input type="text" name="name" id="name" placeholder="Tên" required v-model="name"></td>
                     </tr>
                     <tr>
-                        <td>Link data sheet</td>
-                        <td>
-                            <input type="text" name="data_sheet_link" id="data_sheet_link" placeholder="Data sheet link"
-                                required v-model="data_sheet_link">
-                        </td>
-                    </tr>
-                    <tr>
                         <td>Đơn vị</td>
                         <td><input type="text" name="unit" id="unit" placeholder="Đơn vị" required v-model="unit"></td>
                     </tr>
@@ -58,9 +51,13 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Công suất tối đa(KW)</td>
-                        <td><input type="number" name="power_capacity_kw" id="power_capacity_kw"
-                                placeholder="Công suất tối đa(KW)" v-model="power_capacity_kw">
+                        <td>Công suất áp dụng</td>
+                        <td>
+                            Từ:<br><input type="number" min="0" name="from_power_kw" id="from_power_kw"
+                                v-model="from_power_kw">kW <br>
+                            Đến:<br><input type="number" min="0" name="to_power_kw" id="to_power_kw"
+                                v-model="to_power_kw">kW
+                            <button type="button" @click="getMaxToPower()">Lấy tối đa</button>
                         </td>
                     </tr>
                     <tr>
@@ -124,17 +121,22 @@ const brands = ref([])
 const choseBrand = ref(0)
 const code = ref('')
 const name = ref('')
-const data_sheet_link = ref('')
 const unit = ref('')
 const description_in_contract = ref('')
 const images = ref([])
 const phase_type = ref([]); // Khởi tạo phase_type là một mảng
-const power_capacity_kw = ref(0)
+const from_power_kw = ref(0);
+const to_power_kw = ref(0);
+
+function getMaxToPower(){
+    to_power_kw.value = 10000000
+}
+
 const warranty_years = ref(0)
 const begin_price = ref(0)
 const merchandises = ref([])
 const installation_type = ref('Ongrid')
-const description_in_quotation =ref('')
+const description_in_quotation = ref('')
 
 const addImageInput = () => {
     images.value.push('')
@@ -149,14 +151,15 @@ const createMerchandise = async () => {
         brand_id: choseBrand.value,
         code: code.value,
         name: name.value,
-        data_sheet_link: data_sheet_link.value,
+        data_sheet_link: '',
         unit: unit.value,
         description_in_contract: description_in_contract.value,
         description_in_quotation: description_in_quotation.value,
         data_json: {
             installation_type: installation_type.value,
+            from_power_kw: from_power_kw.value,
+            to_power_kw: to_power_kw.value,
             phase_type: phase_type.value,
-            power_capacity_kw: power_capacity_kw.value,
             warranty_years: warranty_years.value
         },
         images: images.value,
@@ -200,7 +203,7 @@ const loadBrands = async () => {
 // Hàm tải danh sách merchandises
 const loadMerchandises = async () => {
     try {
-        const response = await fetch(CONST_HOST+'/api/products');
+        const response = await fetch(CONST_HOST + '/api/products');
         if (response.ok) {
             const data = await response.json();
             merchandises.value = data; // Cập nhật danh sách merchandises

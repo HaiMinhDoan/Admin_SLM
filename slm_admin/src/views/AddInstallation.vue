@@ -6,7 +6,7 @@
                 <tbody>
                     <tr>
                         <td colspan="2">
-                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo hệ khung nhôm
+                            <h1 style="display: flex; flex-direction: column; align-items: center;">Tạo gói lắp đặt
                             </h1>
                         </td>
                     </tr>
@@ -37,7 +37,7 @@
                     </tr>
                     <tr>
                         <td>Mô tả trong báo giá</td>
-                        <td><textarea name="description_in_contract" id="" cols="30" rows="10"
+                        <td><textarea name="description_in_quotation" id="" cols="30" rows="10"
                                 v-model="description_in_quotation"></textarea></td>
                     </tr>
                     <tr>
@@ -52,26 +52,12 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Kiểu lắp đặt</td>
+                        <td>Công suất áp dụng</td>
                         <td>
-                            <div>
-                                <label>
-                                    <input type="checkbox" value="Áp mái tôn" v-model="installation_type"> Áp mái tôn
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" value="Mái ngói" v-model="installation_type"> Mái ngói
-                                </label><br>
-                                <label>
-                                    <input type="checkbox" value="Khung sắt" v-model="installation_type"> Khung sắt
-                                </label>
-                            </div>
+                            Từ:<br><input type="number" min="0" name="from_power_kwp" id="from_power_kwp" v-model="from_power_kwp">kWp <br>
+                            Đến:<br><input type="number" min="0" name="to_power_kwp" id="to_power_kwp" v-model="to_power_kwp">kWp
+                            <button type="button" @click="getMaxToPower()">Lấy tối đa</button>
                         </td>
-                    </tr>
-
-                    <tr>
-                        <td>Bảo hành</td>
-                        <td><input type="number" name="warranty_years" id="warranty_years" v-model="warranty_years"
-                                placeholder="Bảo hành"></td>
                     </tr>
 
                     <tr>
@@ -106,9 +92,12 @@ const name = ref('')
 const unit = ref('')
 const description_in_contract = ref('')
 const images = ref([])
-const installation_type = ref([]); // Khởi tạo installation_type là một mảng
-const warranty_years = ref(0)
 const begin_price = ref(0)
+const from_power_kwp =ref(0)
+const to_power_kwp = ref(0)
+function getMaxToPower(){
+    to_power_kwp.value = 10000000
+}
 const merchandises = ref([])
 const description_in_quotation = ref('')
 // hoàn thiện code 
@@ -152,7 +141,7 @@ onMounted(async () => {
 
 const createMerchandise = async () => {
     const payload = {
-        template_code: 'ALUMINUM_FRAME',
+        template_code: 'INSTALLATION_PACKAGE',
         supplier_id: null,
         brand_id: choseBrand.value,
         code: code.value,
@@ -163,8 +152,8 @@ const createMerchandise = async () => {
         description_in_quotation: description_in_quotation.value,
         images: images.value,
         data_json: {
-            installation_type: installation_type.value,
-            warranty_years: warranty_years.value
+            from_power_kwp: from_power_kwp.value,
+            to_power_kwp: to_power_kwp.value
         },
         begin_price: begin_price.value,
     };
