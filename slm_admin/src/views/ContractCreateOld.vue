@@ -271,7 +271,7 @@
                                         {{ merchandise.name }}
                                     </option>
                                 </select><br>
-                                Số lượng(mét): <input type="number" v-model="cable.quantity" placeholder="Số lượng"><br>
+                                Số lượng: <input type="number" v-model="cable.quantity" placeholder="Số lượng"><br>
                                 Giá/đơn vị: <input type="number" v-model="cable.price" placeholder="Giá"><br>
                                 GM: <input type="number" name="" id="" v-model="cable.gm" min="0" v-on:change=""><br>
                                 Thời gian bảo hành (năm): <input type="number" name="" id="" v-model="cable.warranty_years" min="0" v-on:change="">
