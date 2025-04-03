@@ -513,7 +513,7 @@ const calcCablePrice = () => {
                 // Lấy giá từ danh sách `dc_ac_cables`
                 let priceInfo = dc_ac_cables.value[i].price_infos;
                 let gm = dc_ac_cables.value[i].template.gm
-                let warranty_years = dc_ac_cables.value[i].warranty_years
+                let warranty_years = dc_ac_cables.value[i].data_json.warranty_years
                 if (priceInfo && priceInfo.length > 0) {
                     if (dc_ac_cables_list.value[j].price === 0) {
                         dc_ac_cables_list.value[j].price = priceInfo[0].import_price_include_vat;
