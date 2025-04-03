@@ -272,8 +272,6 @@ const total_price = ref(0)
 const total_gm = ref(0)
 const kind = ref('combo')
 const pv = ref(0)
-const inverter = ref(0)
-const battery = ref(0)
 const solar_panel_cabinet = ref(0)
 
 const installation_type = ref('Ongrid')
@@ -848,7 +846,7 @@ const calculateW = () => {
                         dc_ac_cables_list.value[j].quantity = 180
                     }
                 }
-                if (cable_code.includes('HE_DAY_DIEN_AC')) {
+                if (cable_code.includes('HE_DAY_DIEN_DAY_AC')) {
                     dc_ac_cables_list.value[j].quantity = 20
                 }
                 if (cable_code.includes('HE_DAY_DIEN_DAY_TIN_HIEU')) {
