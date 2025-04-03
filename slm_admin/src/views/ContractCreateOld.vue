@@ -914,7 +914,7 @@ const getAllSales = async () => {
 }
 // Hàm thêm một mục "Dây cáp DC/AC"
 const addDcAcCable = () => {
-    dc_ac_cables_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10 })
+    dc_ac_cables_list.value.push({ selected: null, quantity: 1, price: 0, gm: 10 , warranty_years:0})
 }
 
 // Hàm xóa một mục "Dây cáp DC/AC"
