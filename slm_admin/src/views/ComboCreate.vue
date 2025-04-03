@@ -397,13 +397,22 @@ const calcCabinetPrice = (id) => {
 
     }
 }
-
 const calcGroundSystemPrice = (id) => {
     let merchandise = getMerchandiseById(id)
     if (merchandise != null) {
         grounding_system_gm.value = merchandise.template.gm
         if (merchandise.price_infos.length != 0) {
-            grounding_system_price.value = merchandise.price_infos[0].import_price_include_vat
+            grounding_systems_list.value.forEach(
+                (grounding) => {
+                    if (grounding.selected === id) {
+                        console.log('có giá')
+                        grounding.warranty_years = merchandise.data_json.warranty_years
+                        if (merchandise.price_infos.length != 0) {
+                            grounding.price = merchandise.price_infos[0].import_price_include_vat;
+                        }
+                    }
+                }
+            );
         }
 
     }
@@ -413,13 +422,18 @@ const calcInstallationPrice = (id) => {
     let merchandise = getMerchandiseById(id)
     if (merchandise != null) {
         installation_package_gm.value = merchandise.template.gm
-        if (merchandise.price_infos.length != 0) {
-            installation_package_price.value = merchandise.price_infos[0].import_price_include_vat
-        }
+        // Thêm phần bảo hành mặc định cho cho gói lắp đặt
+        installation_package_gm.value = merchandise.template.gm;
+        installation_packages_list.value.forEach((installation) => {
+            if (installation.selected === id) {
+                if (merchandise.price_infos.length != 0) {
+                    installation.price = merchandise.price_infos[0].import_price_include_vat
+                }
+            }
 
+        });
     }
 }
-
 const reChangePower = () => {
     for (let i = 0; i < pvs.value.length; i++) {
         if (pv.value === pvs.value[i].id) {
@@ -766,7 +780,7 @@ const calculateAL = () => {
         for (let i = 0; i < aluminums_frames.value.length; i++) {
             if (al_id === aluminums_frames.value[i].id) {
                 let al_code = aluminums_frames.value[i].code
-                if (al_code === 'HE_KHUNG_GIA_DO_NHOM_KEP_BIEN_30') {
+                if (al_code.includes('HE_KHUNG_GIA_DO_NHOM_KEP_BIEN')) {
                     // aluminums_frames_list.value[j].quantity = (pv_number.value / 5 + (pv_number.value % 5 === 0 ? 0 : 1)) * 4 + 4
                     aluminums_frames_list.value[j].quantity = Math.ceil(pv_number.value / 5) * 4 + 4
                 }
@@ -817,7 +831,7 @@ const calculateW = () => {
                         dc_ac_cables_list.value[j].quantity = 180
                     }
                 }
-                if (cable_code.includes('HE_DAY_DIEN_DC_4_0')) {
+                if (cable_code.includes('HE_DAY_DIEN_DAY_DC_DO_4_0')) {
                     if (power >= 5 && power <= 7) {
                         dc_ac_cables_list.value[j].quantity = 60
                     }
