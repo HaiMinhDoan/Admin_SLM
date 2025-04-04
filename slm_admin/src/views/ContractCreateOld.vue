@@ -990,7 +990,7 @@ const calculateAL = () => {
         for (let i = 0; i < aluminums_frames.value.length; i++) {
             if (al_id === aluminums_frames.value[i].id) {
                 let al_code = aluminums_frames.value[i].code
-                if (al_code === 'HE_KHUNG_GIA_DO_NHOM_KEP_BIEN_30') {
+                if (al_code.includes('HE_KHUNG_GIA_DO_NHOM_KEP_BIEN')) {
                     // aluminums_frames_list.value[j].quantity = (pv_number.value / 5 + (pv_number.value % 5 === 0 ? 0 : 1)) * 4 + 4
                     aluminums_frames_list.value[j].quantity = Math.ceil(pv_number.value / 5) * 4 + 4
                 }

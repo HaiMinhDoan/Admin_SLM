@@ -244,6 +244,7 @@
                         <td>
                             <button type="button" v-on:click="calculateTotalPrice()">Tính tổng tiền</button>
                             <button type="button" v-on:click="calculateTotalGM()">Tính GM trung bình</button>
+                            <button type="button" v-on:click ="roundUpTotalPrice()">Làm tròn tổng giá trị</button>
                         </td>
                         <td>
                             <button type="button" @click="createCombo()">Tạo combo</button>
@@ -316,26 +317,33 @@ const calcPvPrice = (id) => {
 }
 
 const calcInvPrice = (id) => {
-    let merchandise = getMerchandiseById(id)
+    let merchandise = getMerchandiseById(id);
     if (merchandise != null) {
-        inverter_gm.value = merchandise.template.gm
-        if (merchandise.price_infos.length != 0) {
-            inverter_price.value = merchandise.price_infos[0].import_price_include_vat
-        }
-
+        const warranty = merchandise.data_json?.warranty_years || 0; // Lấy thời gian bảo hành mặc định
+        inverters_list.value.forEach((inverter) => {
+            if (inverter.selected === id) {
+                inverter.warranty_years = warranty; // Gán thời gian bảo hành mặc định
+                if (merchandise.price_infos.length != 0) {
+                    inverter.price = merchandise.price_infos[0].import_price_include_vat;
+                }
+            }
+        });
     }
-}
-
+};
 const calcBaPrice = (id) => {
-    let merchandise = getMerchandiseById(id)
+    let merchandise = getMerchandiseById(id);
     if (merchandise != null) {
-        battery_gm.value = merchandise.template.gm
-        if (merchandise.price_infos.length != 0) {
-            battery_price.value = merchandise.price_infos[0].import_price_include_vat
-        }
-
+        const warranty = merchandise.data_json?.warranty_years || 0; // Lấy thời gian bảo hành mặc định
+        batteries_list.value.forEach((battery) => {
+            if (battery.selected === id) {
+                battery.warranty_years = warranty; // Gán thời gian bảo hành mặc định
+                if (merchandise.price_infos.length != 0) {
+                    battery.price = merchandise.price_infos[0].import_price_include_vat;
+                }
+            }
+        });
     }
-}
+};
 
 const calcFramePrice = () => {
     for (let j = 0; j < aluminums_frames_list.value.length; j++) {
@@ -582,6 +590,11 @@ const calculateTotalGM = () => {
     } else {
         total_gm.value = 0; // Nếu không có giá trị, GM trung bình là 0
     }
+};
+
+const roundUpTotalPrice = () => {
+    const roundedValue = Math.ceil(total_price.value / 10000) * 10000;
+    total_price.value = roundedValue.toFixed(2); // Làm tròn đến 2 chữ số thập phân
 };
 
 const createCombo = async () => {
