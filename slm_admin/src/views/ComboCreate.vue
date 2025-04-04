@@ -487,44 +487,44 @@ const calculateTotalPrice = () => {
     let total = 0;
 
     // Tính giá cho tấm pin mặt trời
-    total += pv_number.value * pv_price.value * (1 + pv_gm.value / 100);
+    total += pv_number.value * pv_price.value / (1 - pv_gm.value / 100);
 
     // Tính giá cho từng biến tần
     for (let i = 0; i < inverters_list.value.length; i++) {
         const inverter = inverters_list.value[i];
-        total += inverter.quantity * inverter.price * (1 + inverter.gm / 100);
+        total += inverter.quantity * inverter.price / (1 - inverter.gm / 100);
     }
 
     // Tính giá cho từng pin lưu trữ
     for (let i = 0; i < batteries_list.value.length; i++) {
         const battery = batteries_list.value[i];
-        total += battery.quantity * battery.price * (1 + battery.gm / 100);
+        total += battery.quantity * battery.price / (1 - battery.gm / 100);
     }
 
     // Tính giá cho tủ điện NLMT
-    total += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value * (1 + solar_panel_cabinet_gm.value / 100);
+    total += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value / (1 - solar_panel_cabinet_gm.value / 100);
 
     // Tính giá cho từng vật tư trong Hệ khung nhôm
     for (let i = 0; i < aluminums_frames_list.value.length; i++) {
         const frame = aluminums_frames_list.value[i];
-        total += frame.quantity * frame.price * (1 + frame.gm / 100);
+        total += frame.quantity * frame.price / (1 - frame.gm / 100);
     }
 
     // Tính giá cho từng vật tư trong Dây cáp DC/AC
     for (let i = 0; i < dc_ac_cables_list.value.length; i++) {
         const cable = dc_ac_cables_list.value[i];
-        total += cable.quantity * cable.price * (1 + cable.gm / 100);
+        total += cable.quantity * cable.price / (1 - cable.gm / 100);
     }
     // Tính giá cho từng vật tư trong Hệ tiếp địa
     for (let i = 0; i < grounding_systems_list.value.length; i++) {
         const grounding = grounding_systems_list.value[i];
-        total += grounding.quantity * grounding.price * (1 + grounding.gm / 100);
+        total += grounding.quantity * grounding.price / (1 - grounding.gm / 100);
     }
 
     // Tính giá cho từng vật tư trong Trọn gói lắp đặt
     for (let i = 0; i < installation_packages_list.value.length; i++) {
         const installation = installation_packages_list.value[i];
-        total += installation.quantity * installation.price * (1 + installation.gm / 100);
+        total += installation.quantity * installation.price / (1 - installation.gm / 100);
     }
 
     // Gán tổng tiền vào biến `total_price`
@@ -536,57 +536,57 @@ const calculateTotalGM = () => {
     let totalValue = 0;   // Tổng giá trị của toàn bộ combo
 
     // Tính GM và giá trị cho tấm pin mặt trời
-    totalGMValue += pv_number.value * pv_price.value * (pv_gm.value / 100);
+    totalGMValue += pv_number.value * pv_price.value * ((pv_gm.value/100) / (1-pv_gm.value/100));
     totalValue += pv_number.value * pv_price.value;
 
     // Tính GM và giá trị cho từng biến tần
     for (let i = 0; i < inverters_list.value.length; i++) {
         const inverter = inverters_list.value[i];
-        totalGMValue += inverter.quantity * inverter.price * (inverter.gm / 100);
+        totalGMValue += inverter.quantity * inverter.price * (inverter.gm / 100) / (1 - inverter.gm / 100);
         totalValue += inverter.quantity * inverter.price;
     }
 
     // Tính GM và giá trị cho từng pin lưu trữ
     for (let i = 0; i < batteries_list.value.length; i++) {
         const battery = batteries_list.value[i];
-        totalGMValue += battery.quantity * battery.price * (battery.gm / 100);
+        totalGMValue += battery.quantity * battery.price * (battery.gm / 100) / (1 - battery.gm / 100);
         totalValue += battery.quantity * battery.price;
     }
 
     // Tính GM và giá trị cho tủ điện NLMT
-    totalGMValue += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value * (solar_panel_cabinet_gm.value / 100);
+    totalGMValue += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value * (solar_panel_cabinet_gm.value / 100) / (1 - solar_panel_cabinet_gm.value / 100);
     totalValue += solar_panel_cabinet_number.value * solar_panel_cabinet_price.value;
 
     // Tính GM và giá trị cho từng vật tư trong Hệ khung nhôm
     for (let i = 0; i < aluminums_frames_list.value.length; i++) {
         const frame = aluminums_frames_list.value[i];
-        totalGMValue += frame.quantity * frame.price * (frame.gm / 100);
+        totalGMValue += frame.quantity * frame.price * (frame.gm / 100) / (1 - frame.gm / 100);
         totalValue += frame.quantity * frame.price;
     }
 
     // Tính GM và giá trị cho từng vật tư trong Dây cáp DC/AC
     for (let i = 0; i < dc_ac_cables_list.value.length; i++) {
         const cable = dc_ac_cables_list.value[i];
-        totalGMValue += cable.quantity * cable.price * (cable.gm / 100);
+        totalGMValue += cable.quantity * cable.price * (cable.gm / 100) / (1 - cable.gm / 100);
         totalValue += cable.quantity * cable.price;
     }
     // Tính GM và giá trị cho từng vật tư trong Hệ tiếp địa
     for (let i = 0; i < grounding_systems_list.value.length; i++) {
         const grounding = grounding_systems_list.value[i];
-        totalGMValue += grounding.quantity * grounding.price * (grounding.gm / 100);
+        totalGMValue += grounding.quantity * grounding.price * (grounding.gm / 100) / (1 - grounding.gm / 100);
         totalValue += grounding.quantity * grounding.price;
     }
 
     // Tính GM và giá trị cho từng vật tư trong Trọn gói lắp đặt
     for (let i = 0; i < installation_packages_list.value.length; i++) {
         const installation = installation_packages_list.value[i];
-        totalGMValue += installation.quantity * installation.price * (installation.gm / 100);
+        totalGMValue += installation.quantity * installation.price * (installation.gm / 100) / (1 - installation.gm / 100);
         totalValue += installation.quantity * installation.price;
     }
 
     // Tính GM trung bình
     if (totalValue > 0) {
-        total_gm.value = (totalGMValue / totalValue * 100).toFixed(2); // Làm tròn đến 2 chữ số thập phân
+        total_gm.value = 100-(totalValue / (totalValue+totalGMValue) * 100).toFixed(2); // Làm tròn đến 2 chữ số thập phân
     } else {
         total_gm.value = 0; // Nếu không có giá trị, GM trung bình là 0
     }
