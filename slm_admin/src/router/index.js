@@ -68,7 +68,12 @@ const router = createRouter({
       path: '/add-content',
       name: 'add-content',
       component: () => import('../views/AddContent.vue'),
-    }
+    },
+    {
+      path: '/policy-and-privacy',
+      name: 'policy-and-privacy',
+      component: () => import('../views/PolicyAndPrivacy.vue'),
+    },
   ],
 })
 
