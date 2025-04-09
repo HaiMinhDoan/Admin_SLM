@@ -288,12 +288,12 @@ const calcOutput = () => {
         // sản lượng tối đa bằng bằng số tấm pin nhân với công suất một tấm rồi nhân với 3.5
         if (pv.value === pvs.value[i].id) {
             if (installation_type.value === 'Hybrid') {
-                output_max.value = pvs.value[i].data_json.power_watt * pv_number.value * 4
-                output_min.value = pvs.value[i].data_json.power_watt * pv_number.value * 3.5
+                output_max.value = pvs.value[i].data_json.power_watt * pv_number.value * 4 * 30 / 1000
+                output_min.value = pvs.value[i].data_json.power_watt * pv_number.value * 3.5 * 30 / 1000
                 break
             }
-            output_max.value = pvs.value[i].data_json.power_watt * pv_number.value * 3.5
-            output_min.value = pvs.value[i].data_json.power_watt * pv_number.value * 3
+            output_max.value = pvs.value[i].data_json.power_watt * pv_number.value * 3.5 * 30 / 1000
+            output_min.value = pvs.value[i].data_json.power_watt * pv_number.value * 3 * 30 / 1000
             // làm tròn đến hàng chục max thì làm tròn lên còn min thì làm tròn xuống
             output_max.value = Math.ceil(output_max.value / 10) * 10
             output_min.value = Math.floor(output_min.value / 10) * 10
