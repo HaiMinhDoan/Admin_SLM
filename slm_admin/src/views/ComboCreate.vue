@@ -56,7 +56,7 @@
                         <td>Tấm pin mặt trời</td>
                         <td>
                             <select name="pv" id="pv" v-model="pv"
-                                v-on:change="reChangePower(), calculateW(), calcPvPrice(pv)">
+                                v-on:change="reChangePower(), calculateW(), calcPvPrice(pv), calcOutput()">
                                 <option v-for="merchandise in pvs" :value="merchandise.id">{{ merchandise.name }}
                                 </option>
                             </select>
@@ -65,7 +65,7 @@
                         <td>
                             Số lượng:
                             <input type="number" name="" id="" v-model="pv_number" min="0"
-                                v-on:change="calculateAL(), calculateW()">
+                                v-on:change="calculateAL(), calculateW(), calcOutput()">
                         </td>
                         <td>
                             Công suất:
@@ -78,6 +78,15 @@
                         <td>
                             GM:
                             <input type="number" name="" id="" v-model="pv_gm" min="0" v-on:change="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Sản lượng</td>
+                        <td>
+                            Min: <input type="number" name="output_min" id="output_min" v-model="output_min"
+                                placeholder="Sản lượng tối thiểu"><br>
+                            Max: <input type="number" name="output_max" id="output_max" v-model="output_max"
+                                placeholder="Sản lượng tối đa"><br>
                         </td>
                     </tr>
 
@@ -244,7 +253,7 @@
                         <td>
                             <button type="button" v-on:click="calculateTotalPrice()">Tính tổng tiền</button>
                             <button type="button" v-on:click="calculateTotalGM()">Tính GM trung bình</button>
-                            <button type="button" v-on:click ="roundUpTotalPrice()">Làm tròn tổng giá trị</button>
+                            <button type="button" v-on:click="roundUpTotalPrice()">Làm tròn tổng giá trị</button>
                         </td>
                         <td>
                             <button type="button" @click="createCombo()">Tạo combo</button>
@@ -261,7 +270,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { stringify } from 'flatted';
 import { toRaw } from 'vue';
 // const CONST_HOST = "http://localhost:8080"
 const CONST_HOST = "https://id.slmsolar.com"
@@ -273,6 +281,26 @@ const total_price = ref(0)
 const total_gm = ref(0)
 const kind = ref('combo')
 const pv = ref(0)
+const output_min = ref(0)
+const output_max = ref(0)
+const calcOutput = () => {
+    for (let i = 0; i < pvs.value.length; i++) {
+        // sản lượng tối đa bằng bằng số tấm pin nhân với công suất một tấm rồi nhân với 3.5
+        if (pv.value === pvs.value[i].id) {
+            if (installation_type.value === 'Hybrid') {
+                output_max.value = pvs.value[i].data_json.power_watt * pv_number.value * 4
+                output_min.value = pvs.value[i].data_json.power_watt * pv_number.value * 3.5
+                break
+            }
+            output_max.value = pvs.value[i].data_json.power_watt * pv_number.value * 3.5
+            output_min.value = pvs.value[i].data_json.power_watt * pv_number.value * 3
+            // làm tròn đến hàng chục max thì làm tròn lên còn min thì làm tròn xuống
+            output_max.value = Math.ceil(output_max.value / 10) * 10
+            output_min.value = Math.floor(output_min.value / 10) * 10
+            break
+        }
+    }
+}
 const solar_panel_cabinet = ref(0)
 
 const installation_type = ref('Ongrid')
@@ -281,15 +309,9 @@ const aluminums_frame_installation_type = ref('All')
 const image = ref('')
 
 const pv_price = ref(0)
-const inverter_price = ref(0)
-const battery_price = ref(0)
 const solar_panel_cabinet_price = ref(0)
-const grounding_system_price = ref(0)
-const installation_package_price = ref(0)
 
 const pv_gm = ref(0)
-const battery_gm = ref(0)
-const inverter_gm = ref(0)
 const solar_panel_cabinet_gm = ref(0)
 const grounding_system_gm = ref(0)
 const installation_package_gm = ref(0)
@@ -536,7 +558,7 @@ const calculateTotalGM = () => {
     let totalValue = 0;   // Tổng giá trị của toàn bộ combo
 
     // Tính GM và giá trị cho tấm pin mặt trời
-    totalGMValue += pv_number.value * pv_price.value * ((pv_gm.value/100) / (1-pv_gm.value/100));
+    totalGMValue += pv_number.value * pv_price.value * ((pv_gm.value / 100) / (1 - pv_gm.value / 100));
     totalValue += pv_number.value * pv_price.value;
 
     // Tính GM và giá trị cho từng biến tần
@@ -586,7 +608,7 @@ const calculateTotalGM = () => {
 
     // Tính GM trung bình
     if (totalValue > 0) {
-        total_gm.value = 100-(totalValue / (totalValue+totalGMValue) * 100).toFixed(2); // Làm tròn đến 2 chữ số thập phân
+        total_gm.value = 100 - (totalValue / (totalValue + totalGMValue) * 100).toFixed(2); // Làm tròn đến 2 chữ số thập phân
     } else {
         total_gm.value = 0; // Nếu không có giá trị, GM trung bình là 0
     }
@@ -678,6 +700,9 @@ const createCombo = async () => {
         total_price: total_price.value,
         kind: 'combo',
         image: image.value,
+        phase_type: phase_type.value,
+        output_min: output_min.value,
+        output_max: output_max.value,
         list_pre_quote_merchandise: sendingArray
     }
     console.log(JSON.stringify(sendingData))
