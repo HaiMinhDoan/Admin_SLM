@@ -100,7 +100,7 @@
                     <tr>
                         <td>Chọn pha</td>
                         <td>
-                            <div>
+                            <div v-if="installation_type === 'Hybrid'">
                                 <label>
                                     <input type="checkbox" value="1-phase" v-model="phase_type"> 1 pha
                                 </label><br>
@@ -112,6 +112,14 @@
                                     <input type="checkbox" value="3-phase low voltage" v-model="phase_type"> 3 pha áp
                                     thấp
                                 </label>
+                            </div>
+                            <div v-if="installation_type === 'Ongrid'">
+                                <label>
+                                    <input type="checkbox" value="1-phase" v-model="phase_type"> 1 pha
+                                </label><br>
+                                <label>
+                                    <input type="checkbox" value="3-phase" v-model="phase_type"> 3 pha
+                                </label><br>
                             </div>
                         </td>
                     </tr>
